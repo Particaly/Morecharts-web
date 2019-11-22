@@ -4,25 +4,12 @@
   </div>
 </template>
 
-<script>
-import util from '@/libs/util'
-export default {
-  name: 'app',
-  watch: {
-    '$i18n.locale': 'i18nHandle'
-  },
-  created () {
-    this.i18nHandle(this.$i18n.locale)
-  },
-  methods: {
-    i18nHandle (val, oldVal) {
-      util.cookies.set('lang', val)
-      document.querySelector('html').setAttribute('lang', val)
-    }
-  }
+<style scoped lang="scss">
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
 }
-</script>
-
-<style lang="scss">
-@import '~@/assets/style/public-class.scss';
 </style>

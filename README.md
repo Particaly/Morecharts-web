@@ -1,5 +1,29 @@
-[![Build Status](https://www.travis-ci.org/d2-projects/d2-admin-start-kit.svg?branch=master)](https://www.travis-ci.org/d2-projects/d2-admin-start-kit)
+# morecharts-web
 
-[D2Admin](https://github.com/d2-projects/d2-admin) simplified version of the start template, delete all the sample code in the full version, retain all core functions.
+## Project setup
+```
+npm install
+```
 
-[Gitee](https://gitee.com/fairyever/d2-admin-start-kit)
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Run your tests
+```
+npm run test
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
