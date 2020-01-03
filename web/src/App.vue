@@ -11,8 +11,16 @@
 		name: 'app',
 		components:{
 			Header
-		}
-    }
+		},
+		created() {
+			this.inspectLogin()
+		},
+		methods: {
+			inspectLogin(){
+				this.$store.dispatch('loginJudge')
+			},
+		},
+	}
 </script>
 
 <style lang="scss">

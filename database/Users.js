@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var utility = require('utility');
 var Schema = mongoose.Schema;
 var CounterModel = require('./Counter');
+var { getTokenFromDatabase } = require('./Token');
 var { checkMobile, checkEmail } = require('../util');
 
 mongoose.set('useCreateIndex', true);
@@ -76,8 +77,8 @@ function filterCheckOption(data) {
 	return checktype
 }
 
-// 检查用户登录
-function checkUser(data,callback){
+// 登录
+function checkUser(data, callback){
 	let checktype = filterCheckOption(data);
 	User.find(checktype,function (err, res) {
 		if(err) return err;
@@ -101,7 +102,7 @@ function checkUser(data,callback){
 	});
 }
 // 新增用户
-function createUser(data,callback){
+function createUser(data, callback){
 	User.find({
 		$or: [
 			{'userInfo.name':data.pid},
@@ -129,7 +130,12 @@ function createUser(data,callback){
 		}
 	})
 }
+// 判断token
+function checkToken(data, callback){
+	getTokenFromDatabase(data.token, function () {
+		callback()
+	})
+}
 
 
-
-module.exports = { User, checkUser, createUser };
+module.exports = { User, checkUser, createUser, checkToken };

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-let { checkUser, generateToken, createUser } = require('../database');
+let { checkUser, generateToken, createUser, checkToken } = require('../database');
 let { getBody } = require('../util');
 
 /* GET users listing. */
@@ -31,6 +31,12 @@ router.post('/api/register', function(req, res, next) {
 		}else{
 			res.send(msg)
 		}
+	})
+});
+
+router.post('/api/isLogin', function (req, res, next) {
+	checkToken(getBody(req), function (msg) {
+	
 	})
 });
 

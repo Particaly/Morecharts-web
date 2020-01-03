@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var utility = require('utility');
 var jwt = require('jsonwebtoken');
+var { getBody } = require('../util');
 var Schema = mongoose.Schema;
 
 mongoose.set('useCreateIndex', true);
@@ -24,12 +25,13 @@ var tokenSchema = new Schema({
 
 var Token = mongoose.model('Token', tokenSchema);
 
+// 生成token
 function generateToken(msg,callback) {
 	let content = {
 		pid: msg.pid,
 		psw: utility.md5(msg.psw)
 	};
-	let secretkey = 'shoudongjiami@123456789';
+	let secretkey = app.get('jwtTokenSecret');
 	
 	let token = new Token({
 		token: jwt.sign(content, secretkey)
@@ -39,6 +41,29 @@ function generateToken(msg,callback) {
 	});
 	callback(token.token)
 }
+// 检查token
+function getTokenFromDatabase(token, callback){
+	Token.find({
+		token
+	}, function (err, res) {
+		if(err) return console.log(err);
+		if(res.length){
+			try {
+				let app = require('../app');
+				let decoded = jwt.decode(token, app.get('jwtTokenSecret'));
+				console.log(decoded);
+			}catch (e) {
+				console.log(e);
+				return false
+			}
+			
+		}
+		callback(res)
+	})
+}
 
+function handlerTokenCheck(res, req, next){
 
-module.exports = { generateToken };
+}
+
+module.exports = { generateToken, getTokenFromDatabase };

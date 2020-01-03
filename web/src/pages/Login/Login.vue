@@ -6,15 +6,15 @@
             <div class="login-board-inputer">
                 <div class="login-input-holder">
                     <img src="@/assets/login/image/icon_dl_zh.png">
-                    <input type="text" v-model="pid" placeholder="请输入账号" />
+                    <input type="text" v-model="pid" @blur="checkpid" placeholder="请输入账号" />
                 </div>
                 <div class="login-input-holder">
                     <img src="@/assets/login/image/icon_dl_mm.png">
-                    <input type="password" v-model="psw" placeholder="请输入密码" />
+                    <input type="password" v-model="psw" @blur="checkpsw" placeholder="请输入密码" />
                 </div>
                 <div class="login-input-holder" v-if="!log">
                     <img src="@/assets/login/image/email.png" style="width: 17px;left: 4px;top: 8px;">
-                    <input type="text" v-model="pem" placeholder="请输入邮箱" />
+                    <input type="text" v-model="pem" @blur="checkpem" placeholder="请输入邮箱" />
                 </div>
                 <div class="login-input-holder">
                     <div class="remenber-password"
@@ -51,6 +51,10 @@
 		    	this.psw = psw;
 		    	this.remenberPassword = true;
             }
+	        this.$Message.config({
+		        top: 100,
+		        duration: 3
+	        });
         },
         methods: {
 	        logOrReg(){
@@ -61,45 +65,94 @@
                 }
             },
 	        loginClick(){
-	        	if(this.pid&&this.psw){
-			        if(this.remenberPassword){
-				        window.localStorage.setItem('pid',this.pid);
-				        window.localStorage.setItem('psw',this.psw);
-			        }
-			        this.axios({
-                        method: 'post',
-                        url: window.apiURL + 'login',
-                        data: {
-                        	pid: this.pid,
-                            psw: this.psw
-                        }
-                    }).then(d => {
-                    	console.log(d);
-                    })
-                }else{
-
+		        this.checkpid();
+                this.checkpsw();
+                if(this.remenberPassword){
+                    window.localStorage.setItem('pid',this.pid);
+                    window.localStorage.setItem('psw',this.psw);
                 }
+                this.axios({
+                    method: 'post',
+                    url: window.apiURL + 'login',
+                    data: {
+                        pid: this.pid,
+                        psw: this.psw
+                    }
+                }).then(d => {
+                    d = d.data;
+                    if(d.status !== 1){
+                    	this.errormsg(d.msg)
+                    }else{
+	                    this.$Message.success(d.msg);
+	                    localStorage.setItem('Ltoken',d.token)
+                    }
+                })
             },
 	        registerClick(){
-		        if(this.pid&&this.psw){
-			        if(this.remenberPassword){
-				        window.localStorage.setItem('pid',this.pid);
-				        window.localStorage.setItem('psw',this.psw);
-			        }
-			        this.axios({
-				        method: 'post',
-				        url: window.apiURL + 'register',
-				        data: {
-					        pid: this.pid,
-					        psw: this.psw,
-                            pem: this.pem
-				        }
-			        }).then(d => {
-				        console.log(d);
-			        })
-		        }else{
-
-		        }
+		        this.checkpid();
+		        this.checkpsw();
+		        this.checkpem();
+                if(this.remenberPassword){
+                    window.localStorage.setItem('pid',this.pid);
+                    window.localStorage.setItem('psw',this.psw);
+                }
+                this.axios({
+                    method: 'post',
+                    url: window.apiURL + 'register',
+                    data: {
+                        pid: this.pid,
+                        psw: this.psw,
+                        pem: this.pem
+                    }
+                }).then(d => {
+                    console.log(d);
+                })
+            },
+            errormsg(msg){
+	            this.$Message.error({
+		            background: true,
+		            content: msg
+	            });
+            },
+            checkpid(){
+	            if(!this.pid){
+		            this.$Message.error({
+			            background: true,
+			            content: '用户名不能为空'
+		            });
+		            return false;
+	            }else if(!isNaN(Number(this.pid))){
+		            this.$Message.error({
+			            background: true,
+			            content: '用户名不能为纯数字'
+		            });
+		            return false;
+                }else{
+	            	return true
+                }
+            },
+            checkpsw(){
+	            if(!this.psw){
+		            this.$Message.error({
+			            background: true,
+			            content: '密码不能为空'
+		            });
+		            return false;
+	            } else {
+	            	return true;
+                }
+            },
+	        checkpem(){
+		        let re = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+		        if(re.test(this.pem)){
+		        	return true
+                }else{
+			        this.$Message.error({
+				        background: true,
+				        content: '请输入正确的邮箱'
+			        });
+		        	return false
+                }
             }
         },
 	}

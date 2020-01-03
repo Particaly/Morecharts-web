@@ -48,13 +48,7 @@
             	return this.$store.state.isLogin
             }
         },
-        created() {
-			this.inspectLogin()
-        },
         methods: {
-            inspectLogin(){
-            	this.$store.dispatch('loginJudge')
-            },
 	        goLogin(){
             	this.$router.push('/login')
             }
