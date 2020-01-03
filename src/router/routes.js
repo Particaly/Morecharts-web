@@ -3,8 +3,13 @@ export default [
         path: '/',
         name: 'home',
         meta: {
-            title: 'home'
+            title: 'home',
         },
-        component: () => import(/* webpackChunkName: "about" */ '@p/Home/Home')
+        component: () => import('@p/Home/Home')
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import('@p/Login/Login')
     }
 ]

@@ -1,50 +1,30 @@
 const path = require('path')
 const scriptName = JSON.parse(process.env.npm_config_argv).original[1];
 module.exports = {
-  publicPath:process.env.NODE_ENV === 'production'
-    ? '/'
-    : '/',
-  assetsDir: './',
-  configureWebpack: (config) => {
-    if (process.env.NODE_ENV === 'production') {
-      // 为生产环境修改配置...
-      config.mode = 'production'
-    } else {
-      // 为开发环境修改配置...
-      config.mode = 'development'
-    }
-    Object.assign(config, {
-      // 开发生产共同配置
-      resolve: {
-        alias: {
-          '@': path.resolve(__dirname, './src'),
-          '@c': path.resolve(__dirname, './src/components'),
-          '@p':path.resolve(__dirname, './src/pages'),
-          '@image': path.resolve(__dirname, './src/assets/images'),
-          'vue$':'vue/dist/vue.runtime.esm.js'
-        }, // 别名配置
-        extensions: [
-          '.mjs',
-          '.js',
-          '.jsx',
-          '.vue',
-          '.json',
-          '.wasm'
-        ],
-        modules: [
-          'node_modules'
-        ]
-      }
-    })
-
-  },
-  productionSourceMap: scriptName !== 'build',
-  devServer:{
-    proxy:{
-      'http://sy.bddeve.xbcx.com.cn/dsj_sy_show/api':{
-        target:'http://sy.bddeve.xbcx.com.cn/dsj_sy_show/api',
-        changeOrigin: true,
-      }
-    }
-  }
-}
+	publicPath:process.env.NODE_ENV === 'production'
+		? '/morecharts/'
+		: '/',
+	assetsDir: './',
+	outputDir: './morecharts',
+	chainWebpack: config => {
+		config.resolve.alias
+			.set('@', path.resolve(__dirname, './src'))
+			.set('@p', path.resolve(__dirname, './src/pages'))
+			.set('@c', path.resolve(__dirname, './src/components'))
+			.set('@cc', path.resolve(__dirname, './src/components/common'))
+			.set('@image', path.resolve(__dirname, './src/assets/common/images'))
+			.set('vue$', 'vue/dist/vue.esm.js')
+	},
+	productionSourceMap: scriptName !== 'build',
+	devServer:{
+		proxy:{
+			'/app':{
+				target:'http://localhost:3000/morecharts/api/',
+				changeOrigin: true,
+				pathRewrite: {
+					'^/app': "/"
+				}
+			},
+		}
+	}
+};

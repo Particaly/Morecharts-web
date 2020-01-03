@@ -1,16 +1,16 @@
 <template>
 	<div id="app">
-		<SideBar></SideBar>
+		<Header></Header>
 		<router-view/>
 	</div>
 </template>
 
 <script>
-	import SideBar from '@/components/SideBar'
+	import Header from '@cc/Header'
     export default {
 		name: 'app',
 		components:{
-            SideBar
+			Header
 		}
     }
 </script>
