@@ -12,6 +12,10 @@
                     <img src="@/assets/login/image/icon_dl_mm.png">
                     <input type="password" v-model="psw" placeholder="请输入密码" />
                 </div>
+                <div class="login-input-holder" v-if="!log">
+                    <img src="@/assets/login/image/email.png" style="width: 17px;left: 4px;top: 8px;">
+                    <input type="text" v-model="pem" placeholder="请输入邮箱" />
+                </div>
                 <div class="login-input-holder">
                     <div class="remenber-password"
                          :class="{
@@ -19,9 +23,10 @@
                          }"
                          @click="remenberPassword = !remenberPassword"></div>
                     <div class="explain-word" @click="remenberPassword = !remenberPassword">记住密码</div>
+                    <div class="register" @click="log = !log">{{log?'立即注册':'立即登录'}}</div>
                 </div>
             </div>
-            <div class="button-login" @click="loginClick">Login</div>
+            <div class="button-login" @click="loginClick">{{log?'Login':'Register'}}</div>
         </div>
     </main>
 </template>
@@ -33,6 +38,8 @@
             return {
 	            pid: '',
 	            psw: '',
+                pem: '',
+                log: true,
 	            remenberPassword: false
             }
         },
@@ -76,7 +83,6 @@
         position: relative;
         .login-board{
             width: 420px;
-            height: 320px;
             position: absolute;
             left: 50%;
             top: 50%;
@@ -105,13 +111,14 @@
             img{
                 position: absolute;
                 left: 0;
+                top: 4px;
                 width: 24px;
             }
             .explain-word{
                 font-size:20px;
                 font-family:Microsoft YaHei;
                 font-weight:400;
-                color:rgba(227,237,248,.56);
+                color:rgba(227,237,248,1);
                 position: absolute;
                 left: 45px;
                 height: 50px;
@@ -120,6 +127,17 @@
             }
             &:last-child{
                 border-bottom: none;
+            }
+            .register{
+                font-size:20px;
+                font-family:Microsoft YaHei;
+                font-weight:400;
+                color:rgba(227,237,248,1);
+                position: absolute;
+                right: 0;
+                height: 50px;
+                line-height: 40px;
+                cursor: pointer;
             }
         }
         .remenber-password{
@@ -141,7 +159,7 @@
         }
 
         .button-login{
-            width:80%;
+            width:85%;
             height:40px;
             background:rgba(19,159,224,1);
             border-radius:5px;
@@ -150,7 +168,7 @@
             font-family:Microsoft YaHei;
             font-weight:400;
             color:rgba(255,255,255,1);
-            margin: 0 auto;
+            margin: 0 auto 25px auto;
             text-align: center;
             white-space: nowrap;
             cursor: pointer;
@@ -172,7 +190,7 @@
             letter-spacing: 1.5px;
         }
         input::placeholder{
-            font-size:24px;
+            font-size:18px;
             font-family:Microsoft YaHei;
             font-weight:400;
             color:rgba(227,237,248,.5);
