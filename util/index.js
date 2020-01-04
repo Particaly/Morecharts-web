@@ -1,3 +1,6 @@
+var tokenchecker = require('./middleware/tokenchecker');
+
+
 function getBody(req) {
 	if(JSON.stringify(req.body) === "{}"){
 		return req.query;
@@ -21,4 +24,4 @@ function checkMobile(str) {
 	return re.test(str);
 }
 
-module.exports = { getBody, isType, checkEmail, checkMobile };
+module.exports = { getBody, isType, checkEmail, checkMobile, tokenchecker };

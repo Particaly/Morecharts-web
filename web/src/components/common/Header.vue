@@ -31,6 +31,9 @@
             <div class="login-btn" v-if="!isLogin" @click="goLogin">
                 登录
             </div>
+            <div class="user-icon" v-if="isLogin">
+                {{userInfo.name|firstWord}}
+            </div>
         </div>
     </header>
 </template>
@@ -46,6 +49,9 @@
         computed:{
             isLogin(){
             	return this.$store.state.isLogin
+            },
+            userInfo(){
+                return this.$store.state.LoginInfo
             }
         },
         methods: {
@@ -53,6 +59,11 @@
             	this.$router.push('/login')
             }
         },
+        filters:{
+            firstWord(word){
+                return word.toString().charAt(0).toUpperCase()
+            }
+        }
 	}
 </script>
 
@@ -134,6 +145,21 @@ header{
             color: #fff;
             font-size: 15px;
             cursor: pointer;
+        }
+        .user-icon{
+            width: 40px;
+            height: 40px;
+            background: #2baee9;
+            margin: 10px 0 auto 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
         }
     }
 }

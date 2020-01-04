@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
+var { tokenchecker } = require('./util');
+var { checkToken } = require('./database/Users');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -26,6 +28,8 @@ app.use(sassMiddleware({
   indentedSyntax: true, // true = .sass and false = .scss
   sourceMap: true
 }));
+app.use(tokenchecker);
+app.use(checkToken);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);

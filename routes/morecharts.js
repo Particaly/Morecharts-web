@@ -35,9 +35,7 @@ router.post('/api/register', function(req, res, next) {
 });
 
 router.post('/api/isLogin', function (req, res, next) {
-	checkToken(getBody(req), function (msg) {
-	
-	})
+	res.send()
 });
 
 module.exports = router;

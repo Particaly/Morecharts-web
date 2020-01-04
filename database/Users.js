@@ -131,11 +131,87 @@ function createUser(data, callback){
 	})
 }
 // 判断token
-function checkToken(data, callback){
-	getTokenFromDatabase(data.token, function () {
-		callback()
-	})
+
+/*
+* @status
+* status:	1 // 已登录, 2 // 未登录, 3 // 密码近期被修改, 4 // 找不到用户
+* */
+function checkToken(req, res, next){
+	if(!req.decode_token){
+		next();
+		return
+	}
+	res.send = new Proxy(res.send, {
+		apply :function (target, thisArg, argArray) {
+			if(!thisArg.sended){
+				thisArg.sended = true;
+				argArray[0] = {
+					data: argArray[0],
+					...thisArg.tempRes
+				};
+				return Reflect.apply(target, thisArg, argArray)
+			}
+			return Reflect.apply(target, thisArg, argArray)
+		}
+	});
+
+	if(req.decode_token.toString() === '{}'){
+		makeTempRes(req, 'loginInfo',{
+			status: 2,
+			msg: '未登录'
+		});
+		next();
+	}
+	getTokenFromDatabase(req.decode_token.token, function (tokenlist) {
+		if(tokenlist.length){
+			User.find({
+				'userInfo.name': req.decode_token.pid
+			}, function (err, userlist) {
+				if(err) return console.log(err);
+				if(userlist.length){
+					if(userlist[0].userPass === req.decode_token.psw){
+						makeTempRes(res, 'loginInfo', {
+							status: 1,
+							msg: '已登录',
+							username: userlist[0].userInfo.name
+						});
+						next();
+					}else{
+						makeTempRes(res, 'loginInfo', {
+							status: 3,
+							msg: '用户密码已过期'
+						});
+						next();
+					}
+				}else{
+					makeTempRes(res, 'loginInfo', {
+						status: 3,
+						msg: '无效token'
+					});
+					next();
+				}
+			})
+		}else{
+			makeTempRes(res, 'loginInfo', {
+				status: 3,
+				msg: '无效token'
+			});
+			next();
+		}
+	});
 }
 
+function makeTempRes(req, targetName, target){
+	if(req.tempRes){
+		req.tempRes[targetName] = target;
+	}else{
+		req.tempRes = {};
+		req.tempRes[targetName] = target;
+	}
+}
 
+function isType(type, target){
+	const Tag = `[object ${type}]`;
+	return Object.prototype.toString.call(target) === Tag
+}
 module.exports = { User, checkUser, createUser, checkToken };

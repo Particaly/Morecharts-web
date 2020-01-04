@@ -6,6 +6,10 @@ axios.defaults.crossDomain = true;
 axios.interceptors.request.use((config) => {
 	config.headers = {'Content-Type':'application/x-www-form-urlencoded'};
 	config.data = qs.stringify(config.data, {arrayFormat: 'brackets'});
+	let token = window.localStorage.getItem('Ltoken');
+	if(token){
+		config.headers.Authorization = token;
+	}
 	return config;
 });
 

@@ -44,19 +44,25 @@
             }
         },
         created(){
-		    let pid = window.localStorage.getItem('pid');
-		    let psw = window.localStorage.getItem('psw');
-		    if(pid&&psw){
-		    	this.pid = pid;
-		    	this.psw = psw;
-		    	this.remenberPassword = true;
+		    if(this.$store.state.isLogin){
+                this.$router.push('/')
             }
-	        this.$Message.config({
-		        top: 100,
-		        duration: 3
-	        });
+            this.checkRemberInfo()
         },
         methods: {
+		    checkRemberInfo(){
+                let pid = window.localStorage.getItem('pid');
+                let psw = window.localStorage.getItem('psw');
+                if(pid&&psw){
+                    this.pid = pid;
+                    this.psw = psw;
+                    this.remenberPassword = true;
+                }
+                this.$Message.config({
+                    top: 100,
+                    duration: 3
+                });
+            },
 	        logOrReg(){
 	            if(this.log){
 	            	this.loginClick()
@@ -84,7 +90,9 @@
                     	this.errormsg(d.msg)
                     }else{
 	                    this.$Message.success(d.msg);
-	                    localStorage.setItem('Ltoken',d.token)
+	                    localStorage.setItem('Ltoken',d.token);
+	                    this.$store.commit('changeLoginStatus', true);
+	                    this.$router.push('/')
                     }
                 })
             },

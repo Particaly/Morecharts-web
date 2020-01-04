@@ -10,6 +10,9 @@ export default new Vuex.Store({
 		LoginInfo: null
 	},
 	mutations: {
+		changeLoginStatus(state, param){
+			state.isLogin = param
+		},
 		loginJudge(state, param){
 			state.isLogin = param.isLogin;
 			state.LoginInfo = param.LoginInfo;
@@ -22,11 +25,14 @@ export default new Vuex.Store({
 				axios({
 					url: window.apiURL + 'isLogin',
 					method: 'post',
-					data: {
-						token
-					}
 				}).then(d => {
-					console.log(d);
+					d = d.data;
+					if(d.loginInfo.status === 1){
+						commit('loginJudge',{isLogin: true,LoginInfo: {name: d.loginInfo.username}})
+					}else{
+						window.localStorage.removeItem('Ltoken');
+						commit('loginJudge',{isLogin: false,LoginInfo: null})
+					}
 				})
 			}else{
 				commit('loginJudge',{isLogin: false,LoginInfo: null})

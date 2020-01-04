@@ -31,8 +31,9 @@ function generateToken(msg,callback) {
 		pid: msg.pid,
 		psw: utility.md5(msg.psw)
 	};
+	let app = require('../app.js');
 	let secretkey = app.get('jwtTokenSecret');
-	
+
 	let token = new Token({
 		token: jwt.sign(content, secretkey)
 	});
@@ -47,17 +48,6 @@ function getTokenFromDatabase(token, callback){
 		token
 	}, function (err, res) {
 		if(err) return console.log(err);
-		if(res.length){
-			try {
-				let app = require('../app');
-				let decoded = jwt.decode(token, app.get('jwtTokenSecret'));
-				console.log(decoded);
-			}catch (e) {
-				console.log(e);
-				return false
-			}
-			
-		}
 		callback(res)
 	})
 }
