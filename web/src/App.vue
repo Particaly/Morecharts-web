@@ -33,4 +33,9 @@
 		text-align: center;
 		background: #EEEFF3;
 	}
+	.iconfont {
+		width: 100%; height: 100%;
+		fill: currentColor;
+		overflow: hidden;
+	}
 </style>

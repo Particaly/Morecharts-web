@@ -7,7 +7,8 @@ import { axios } from '@/lib/config'
 import echarts from 'echarts'
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
-import '@/assets/iconfont/base/iconfont.css'
+import '@/assets/iconfont/base/iconfont.js'
+// import '@/assets/iconfont/base/iconfont.css'
 
 Vue.config.productionTip = false;
 Vue.use(iView);

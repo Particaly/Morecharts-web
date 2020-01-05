@@ -1,13 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { axios } from '@/lib/config'
+import { categoryList } from "./data";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state: {
 		isLogin: false,
-		loginInfo: {}
+		loginInfo: {},
+		categoryList: categoryList
 	},
 	mutations: {
 		changeLoginStatus(state, param){

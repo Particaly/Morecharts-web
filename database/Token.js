@@ -24,8 +24,5 @@ function generateToken(msg,callback) {
 }
 
 
-function handlerTokenCheck(res, req, next){
-
-}
 
 module.exports = { generateToken };
