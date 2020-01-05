@@ -7,7 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
 	state: {
 		isLogin: false,
-		LoginInfo: null
+		loginInfo: {}
 	},
 	mutations: {
 		changeLoginStatus(state, param){
@@ -15,7 +15,12 @@ export default new Vuex.Store({
 		},
 		loginJudge(state, param){
 			state.isLogin = param.isLogin;
-			state.LoginInfo = param.LoginInfo;
+			state.loginInfo = param.loginInfo;
+		},
+		logout(state, param){
+			window.localStorage.removeItem('Ltoken');
+			state.isLogin = false;
+			state.loginInfo = {};
 		}
 	},
 	actions: {
@@ -28,14 +33,14 @@ export default new Vuex.Store({
 				}).then(d => {
 					d = d.data;
 					if(d.loginInfo.status === 1){
-						commit('loginJudge',{isLogin: true,LoginInfo: {name: d.loginInfo.username}})
+						commit('loginJudge',{isLogin: true,loginInfo: {name: d.loginInfo.username}})
 					}else{
 						window.localStorage.removeItem('Ltoken');
-						commit('loginJudge',{isLogin: false,LoginInfo: null})
+						commit('loginJudge',{isLogin: false,loginInfo: {}})
 					}
 				})
 			}else{
-				commit('loginJudge',{isLogin: false,LoginInfo: null})
+				commit('loginJudge',{isLogin: false,loginInfo: {}})
 			}
 		}
 	},

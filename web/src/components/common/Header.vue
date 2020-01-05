@@ -7,7 +7,7 @@
             <nav class="navigation">
                 <ul>
                     <li>
-                        <a class="current" href="/resource">首页</a>
+                        <a class="current" href="/">首页</a>
                     </li>
                     <li>
                         <a href="/plugin">说明</a>
@@ -31,9 +31,17 @@
             <div class="login-btn" v-if="!isLogin" @click="goLogin">
                 登录
             </div>
-            <div class="user-icon" v-if="isLogin">
-                {{userInfo.name|firstWord}}
-            </div>
+            <Dropdown v-if="isLogin" @on-click="checkPage">
+                <div class="user-icon" :xixi="userInfo.name+''">
+                    {{userInfo.name|firstWord}}
+                </div>
+                <DropdownMenu slot="list">
+                    <DropdownItem name="1">{{userInfo.name}}的主页</DropdownItem>
+                    <DropdownItem name="2">修改密码</DropdownItem>
+                    <DropdownItem name="3">退出登录</DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
+
         </div>
     </header>
 </template>
@@ -51,17 +59,35 @@
             	return this.$store.state.isLogin
             },
             userInfo(){
-                return this.$store.state.LoginInfo
+                return this.$store.state.loginInfo
             }
+        },
+        created(){
+		    window.dd = this;
         },
         methods: {
 	        goLogin(){
             	this.$router.push('/login')
+            },
+            checkPage(name){
+                switch (name) {
+                    case '1':
+                        console.log('主页');
+                        break;
+                    case '2':
+                        console.log('修改密码');
+                        break;
+                    case '3':
+                        this.$store.commit('logout');
+                        this.$Message.success('退出成功');
+                        this.$router.push('/');
+                        break;
+                }
             }
         },
         filters:{
             firstWord(word){
-                return word.toString().charAt(0).toUpperCase()
+                return word?.toString().charAt(0).toUpperCase()
             }
         }
 	}

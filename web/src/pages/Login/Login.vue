@@ -93,6 +93,7 @@
 	                    localStorage.setItem('Ltoken',d.token);
 	                    this.$store.commit('changeLoginStatus', true);
 	                    this.$router.push('/')
+                        this.$store.dispatch('loginJudge')
                     }
                 })
             },
@@ -113,7 +114,16 @@
                         pem: this.pem
                     }
                 }).then(d => {
-                    console.log(d);
+                    d = d.data;
+                    if(d.status !== 1){
+                        this.errormsg(d.msg)
+                    }else{
+                        this.$Message.success(d.msg);
+                        localStorage.setItem('Ltoken',d.token);
+                        this.$store.commit('changeLoginStatus', true);
+                        this.$router.push('/')
+                        this.$store.dispatch('loginJudge')
+                    }
                 })
             },
             errormsg(msg){
