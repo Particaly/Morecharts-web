@@ -32,6 +32,11 @@ var userSchema = new Schema({
         email: String,
         phone: String
     },
+    userType: {
+        type: String,
+        required: true,
+        default: 'normal'
+    },
     userPass: String,
 });
 userSchema.pre('save',async function() {
@@ -40,6 +45,11 @@ userSchema.pre('save',async function() {
     this.userId = await CounterModel.increment('userId');
 });
 var User = mongoose.model('User', userSchema);
+
+var projectSchema = new Schema({
+    auther: String,
+
+});
 
 
 module.exports = { Token, User };

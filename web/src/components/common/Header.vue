@@ -7,16 +7,16 @@
             <nav class="navigation">
                 <ul>
                     <li>
-                        <a class="current" href="/">首页</a>
+                        <router-link :class="{'current':$route.name === 'home'}" to="/">首页</router-link>
                     </li>
                     <li>
-                        <a href="/plugin">说明</a>
+                        <router-link :class="{'current':$route.name === 'explain'}" to="/explain">说明</router-link>
                     </li>
                     <li>
-                        <a href="/tool">问题交流</a>
+                        <router-link :class="{'current':$route.name === 'communication'}" to="/communication">问题交流</router-link>
                     </li>
                     <li>
-                        <a href="/video">关注用户</a>
+                        <router-link :class="{'current':$route.name === 'dashboard'}" to="/dashboard">项目列表</router-link>
                     </li>
                 </ul>
             </nav>
@@ -43,15 +43,23 @@
             </Dropdown>
 
         </div>
+        <Modal v-model="showModel" title="修改密码" :loading="loading" @on-ok="checkNewPassword">
+            <ChangePassword ref="dom_psw"></ChangePassword>
+        </Modal>
     </header>
 </template>
 
 <script>
+    import ChangePassword from '@cc/ChangePassword.vue'
 	export default {
 		name: "Header",
+        components:{
+            ChangePassword
+        },
         data: function(){
             return {
-
+                showModel: false,
+                loading: true
             }
         },
         computed:{
@@ -72,9 +80,10 @@
             checkPage(name){
                 switch (name) {
                     case '1':
-                        console.log('主页');
+                        this.$router.push('/');
                         break;
                     case '2':
+                        this.showModel = true;
                         console.log('修改密码');
                         break;
                     case '3':
@@ -83,6 +92,24 @@
                         this.$router.push('/');
                         break;
                 }
+            },
+            checkNewPassword(){
+                let oldpsw = this.$refs.dom_psw.oldpsw,
+                    newpsw = this.$refs.dom_psw.newpsw,
+                    repeatpsw = this.$refs.dom_psw.repeatpsw;
+                if(!oldpsw){this.loading=false;this.$Message.error('请输入旧密码');this.$nextTick(()=>{this.loading=true;});return}
+                if(!newpsw){this.loading=false;this.$Message.error('请输入新密码');this.$nextTick(()=>{this.loading=true;});return}
+                if(!repeatpsw){this.loading=false;this.$Message.error('请重复新密码');this.$nextTick(()=>{this.loading=true;});return}
+                if(newpsw!==repeatpsw){this.loading=false;this.$Message.error('请重复新密码');this.$nextTick(()=>{this.loading=true;});return}
+                this.axios({
+                    url: window.apiURL + 'changepassword',
+                    method: 'post',
+                    data: {
+                        oldpsw,newpsw
+                    }
+                }).then( d =>{
+                    console.log(d)
+                })
             }
         },
         filters:{
@@ -128,6 +155,10 @@ header{
                 font-size: 15px;
                 line-height: 60px;
                 color: #fff;
+                opacity: 0.7;
+                &.current{
+                    opacity: 1;
+                }
             }
         }
         .search {
@@ -189,4 +220,9 @@ header{
         }
     }
 }
+</style>
+<style>
+    .tooltips-close{
+        display: none!important;
+    }
 </style>

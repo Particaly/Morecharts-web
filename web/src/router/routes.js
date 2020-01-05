@@ -11,5 +11,10 @@ export default [
         path: '/login',
         name: 'login',
         component: () => import('@p/Login/Login')
+    },
+    {
+        path: '/dashboard',
+        name: 'dashboard',
+        component: () => import('@p/DashBoard/DashBoard')
     }
 ]
