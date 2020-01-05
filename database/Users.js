@@ -1,42 +1,8 @@
-var mongoose = require('mongoose');
+var { User } = require('./dbindex');
 var utility = require('utility');
-var Schema = mongoose.Schema;
-var CounterModel = require('./Counter');
+
 var { getTokenFromDatabase } = require('./Token');
 var { checkMobile, checkEmail } = require('../util');
-
-mongoose.set('useCreateIndex', true);
-mongoose.set('useFindAndModify', false);
-mongoose.connect('mongodb://localhost/test', {useNewUrlParser: true, useUnifiedTopology: true}, function(err){
-	if(err){
-		console.log('Connection Error:' + err)
-	}else{
-		console.log('Connection success!')
-	}
-});
-
-var userSchema = new Schema({
-	userId: {
-		type: Number,
-		default: 0
-	},
-	userInfo: {
-		name: String,
-		email: String,
-		phone: String
-	},
-	userPass: String,
-});
-
-userSchema.pre('save',async function() {
-	// Don't increment if this is NOT a newly created document
-	if(!this.isNew) return;
-	this.userId = await CounterModel.increment('userId');
-});
-
-var User = mongoose.model('User', userSchema);
-
-
 
 User.find({
 	'userInfo.name': 'admin'
@@ -130,88 +96,7 @@ function createUser(data, callback){
 		}
 	})
 }
-// 判断token
 
-/*
-* @status
-* status:	1 // 已登录, 2 // 未登录, 3 // 密码近期被修改, 4 // 找不到用户
-* */
-function checkToken(req, res, next){
-	if(!req.decode_token){
-		next();
-		return
-	}
-	res.send = new Proxy(res.send, {
-		apply :function (target, thisArg, argArray) {
-			if(!thisArg.sended){
-				thisArg.sended = true;
-				argArray[0] = {
-					data: argArray[0],
-					...thisArg.tempRes
-				};
-				return Reflect.apply(target, thisArg, argArray)
-			}
-			return Reflect.apply(target, thisArg, argArray)
-		}
-	});
 
-	if(req.decode_token.toString() === '{}'){
-		makeTempRes(req, 'loginInfo',{
-			status: 2,
-			msg: '未登录'
-		});
-		next();
-	}
-	getTokenFromDatabase(req.decode_token.token, function (tokenlist) {
-		if(tokenlist.length){
-			User.find({
-				'userInfo.name': req.decode_token.pid
-			}, function (err, userlist) {
-				if(err) return console.log(err);
-				if(userlist.length){
-					if(userlist[0].userPass === req.decode_token.psw){
-						makeTempRes(res, 'loginInfo', {
-							status: 1,
-							msg: '已登录',
-							username: userlist[0].userInfo.name
-						});
-						next();
-					}else{
-						makeTempRes(res, 'loginInfo', {
-							status: 3,
-							msg: '用户密码已过期'
-						});
-						next();
-					}
-				}else{
-					makeTempRes(res, 'loginInfo', {
-						status: 3,
-						msg: '无效token'
-					});
-					next();
-				}
-			})
-		}else{
-			makeTempRes(res, 'loginInfo', {
-				status: 3,
-				msg: '无效token'
-			});
-			next();
-		}
-	});
-}
 
-function makeTempRes(req, targetName, target){
-	if(req.tempRes){
-		req.tempRes[targetName] = target;
-	}else{
-		req.tempRes = {};
-		req.tempRes[targetName] = target;
-	}
-}
-
-function isType(type, target){
-	const Tag = `[object ${type}]`;
-	return Object.prototype.toString.call(target) === Tag
-}
-module.exports = { User, checkUser, createUser, checkToken };
+module.exports = { User, checkUser, createUser };
