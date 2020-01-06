@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
-let { checkUser, generateToken, createUser, changepassword } = require('../database');
+let {
+	checkUser, generateToken, createUser, changepassword,
+	getUserInfo
+} = require('../database');
 let { getBody } = require('../util');
 
 /* GET users listing. */
@@ -23,6 +26,10 @@ router.post('/api/login',function (req, res, next) {
 
 router.post('/api/changepassword',function (req, res, next) {
 	changepassword(req, res, next)
+});
+
+router.post('/api/getUserInfo',function (req, res, next) {
+	getUserInfo(req,res,next)
 });
 
 router.post('/api/register', function(req, res, next) {

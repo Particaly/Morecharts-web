@@ -80,7 +80,7 @@
             checkPage(name){
                 switch (name) {
                     case '1':
-                        this.$router.push('/');
+                        this.$router.push('/personal');
                         break;
                     case '2':
                         this.showModel = true;

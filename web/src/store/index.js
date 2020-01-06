@@ -44,6 +44,21 @@ export default new Vuex.Store({
 			}else{
 				commit('loginJudge',{isLogin: false,loginInfo: {}})
 			}
+		},
+		getUserInfo({ commit }){
+			axios({
+				url: window.apiURL + 'getUserInfo',
+				method: 'post',
+			}).then(d => {
+				d = d.data;
+				console.log(d);
+				if(d.loginInfo.status === 1){
+					commit('loginJudge',{isLogin: true,loginInfo: {name: d.loginInfo.username}})
+				}else{
+					window.localStorage.removeItem('Ltoken');
+					commit('loginJudge',{isLogin: false,loginInfo: {}})
+				}
+			})
 		}
 	},
 	modules: {

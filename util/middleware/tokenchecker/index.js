@@ -1,29 +1,12 @@
 var { Token,User } = require('../../../database/dbindex');
 var jwt = require('jsonwebtoken');
 
-function tokenchecker(req, res, next) {
-    let token = req.get('Authorization');
-    if(token){
-        try {
-            req.decode_token = jwt.decode(token, req.app.get('jwtTokenSecret'));
-            req.decode_token.token = token;
-        }catch (e) {
-            req.decode_token = {};
-        }
-    }
-    next();
-}
-
 // 判断token
 /*
 * @status
 * status:	1 // 已登录, 2 // 未登录, 3 // 密码近期被修改, 4 // 找不到用户
 * */
 function checkToken(req, res, next){
-    if(!req.decode_token){
-        next();
-        return
-    }
     res.send = new Proxy(res.send, {
         apply :function (target, thisArg, argArray) {
             if(!thisArg.sended){
@@ -37,9 +20,25 @@ function checkToken(req, res, next){
             return Reflect.apply(target, thisArg, argArray)
         }
     });
+    let token = req.get('Authorization');
+    if(token){
+        try {
+            req.decode_token = jwt.decode(token, req.app.get('jwtTokenSecret'));
+            req.decode_token.token = token;
+        }catch (e) {
+            req.decode_token = {};
+        }
+    }else{
+        makeTempRes(res, 'loginInfo',{
+            status: 2,
+            msg: '未登录'
+        });
+        next();
+        return
+    }
 
     if(req.decode_token.toString() === '{}'){
-        makeTempRes(req, 'loginInfo',{
+        makeTempRes(res, 'loginInfo',{
             status: 2,
             msg: '未登录'
         });
@@ -101,4 +100,4 @@ function getTokenFromDatabase(token, callback){
     })
 }
 
-module.exports = { tokenchecker, checkToken };
+module.exports = { checkToken };

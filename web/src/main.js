@@ -1,9 +1,7 @@
 import '@/lib/config';
 import Vue from 'vue';
 import App from './App.vue';
-import router from './router';
-import store from './store';
-import { axios } from '@/lib/config';
+import { axios, store, router } from '@/lib/config';
 import echarts from 'echarts';
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';

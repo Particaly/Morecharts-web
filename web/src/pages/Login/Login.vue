@@ -85,14 +85,14 @@
                         psw: this.psw
                     }
                 }).then(d => {
-                    d = d.data;
+                    d = d.data.data;
                     if(d.status !== 1){
                     	this.errormsg(d.msg)
                     }else{
 	                    this.$Message.success(d.msg);
 	                    localStorage.setItem('Ltoken',d.token);
 	                    this.$store.commit('changeLoginStatus', true);
-	                    this.$router.push('/')
+	                    this.$router.push('/');
                         this.$store.dispatch('loginJudge')
                     }
                 })

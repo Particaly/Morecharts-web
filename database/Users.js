@@ -136,6 +136,29 @@ function changepassword(req, res, next){
 		})
 	}
 }
+// 获取用户信息
+function getUserInfo(req,res,next){
+	if(!res.tempRes||!res.tempRes.loginInfo||res.tempRes.loginInfo.status!==1){
+		res.send();
+	}else{
+		User.find({
+			'userInfo.name': req.decode_token.pid
+		},function (err, user) {
+			if(err) return console.log(err);
+			if(user.length){
+				res.send({
+					userInfo: user[0].userInfo,
+					userType: user[0].userType,
+					userId: user[0].userId
+				})
+			}else{
+				res.send({
+					status: 3,
+					msg: '用户数据错误'
+				})
+			}
+		})
+	}
+}
 
-
-module.exports = { User, checkUser, createUser, changepassword };
+module.exports = { User, checkUser, createUser, changepassword, getUserInfo };

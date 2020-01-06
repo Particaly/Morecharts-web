@@ -1,4 +1,4 @@
-var { tokenchecker, checkToken } = require('./middleware/tokenchecker');
+var tokenchecker = require('./middleware/tokenchecker');
 
 
 function getBody(req) {
@@ -24,4 +24,4 @@ function checkMobile(str) {
 	return re.test(str);
 }
 
-module.exports = { getBody, isType, checkEmail, checkMobile, tokenchecker, checkToken };
+module.exports = { getBody, isType, checkEmail, checkMobile,...tokenchecker };
