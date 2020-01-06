@@ -12,6 +12,10 @@
             </div>
             <div class="user-info">
                 <div class="user-name">{{userInfo.name}}</div>
+                <div class="flex-line"><span>用户ID</span><span>{{userInfo.id|filterContent}}</span></div>
+                <div class="flex-line"><span>邮箱</span><span>{{userInfo.email|filterContent}}</span></div>
+                <div class="flex-line"><span>联系方式</span><span>{{userInfo.phone|filterContent}}</span></div>
+                <div class="flex-line"><span>用户等级</span><span>{{userInfo.type|filterContent}}</span></div>
             </div>
         </Card>
     </main>
@@ -31,7 +35,10 @@
 		filters:{
 			firstWord(word){
 				return word?.toString().charAt(0).toUpperCase()
-			}
+			},
+			filterContent(word){
+				return word||'暂无'
+            }
 		}
 
 	}
@@ -81,12 +88,24 @@
             }
         }
         .user-info{
-            height: 400px;
             padding: 30px 200px;
             .user-name{
                 font-weight: 700;
                 font-size: 20px;
                 vertical-align: middle;
+                margin-bottom: 20px;
+            }
+            .flex-line{
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                height: 40px;
+                span:first-child{
+                    min-width: 60px;
+                }
+                span:last-child{
+                    margin-left: 15px;
+                }
             }
         }
     }

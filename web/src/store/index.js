@@ -51,9 +51,12 @@ export default new Vuex.Store({
 				method: 'post',
 			}).then(d => {
 				d = d.data;
-				console.log(d);
 				if(d.loginInfo.status === 1){
-					commit('loginJudge',{isLogin: true,loginInfo: {name: d.loginInfo.username}})
+					commit('loginJudge',{isLogin: true,loginInfo: {
+						...d.data.userInfo,
+						type: d.data.userType,
+						id: d.data.userId
+					}})
 				}else{
 					window.localStorage.removeItem('Ltoken');
 					commit('loginJudge',{isLogin: false,loginInfo: {}})
