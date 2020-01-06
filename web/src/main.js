@@ -3,8 +3,8 @@ import Vue from 'vue';
 import App from './App.vue';
 import { axios, store, router } from '@/lib/config';
 import echarts from 'echarts';
-import iView from 'iview';
-import 'iview/dist/styles/iview.css';
+import iView from 'view-design';
+import 'view-design/dist/styles/iview.css';
 import '@/assets/iconfont/base/iconfont.js';
 import tooltips from '@jspatrick/tooltip';
 import '@jspatrick/tooltip/dist/popup.css'

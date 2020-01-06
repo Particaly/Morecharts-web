@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 let {
 	checkUser, generateToken, createUser, changepassword,
-	getUserInfo
+	getUserInfo, getProjectList
 } = require('../database');
 let { getBody } = require('../util');
 
@@ -48,5 +48,10 @@ router.post('/api/register', function(req, res, next) {
 router.post('/api/isLogin', function (req, res, next) {
 	res.send()
 });
+
+router.post('/api/getProjectList',function (req,res,next) {
+	getProjectList(req,res,next)
+});
+
 
 module.exports = router;

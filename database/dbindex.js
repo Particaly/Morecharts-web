@@ -47,9 +47,28 @@ userSchema.pre('save',async function() {
 var User = mongoose.model('User', userSchema);
 
 var projectSchema = new Schema({
-    auther: String,
-
+    auther: {
+        type: String,
+        required: true
+    },
+    member: {
+        type: Array,
+        required: true,
+        default: function () {
+            return [];
+        }
+    },
+    projectName: String,
+    projectDescribe: String,
+    chartList: {
+        type: Array,
+        required: true,
+        default: function () {
+            return [];
+        }
+    }
 });
+var Project = mongoose.model('Project', projectSchema);
 
 
-module.exports = { Token, User };
+module.exports = { Token, User, Project };
