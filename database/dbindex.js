@@ -38,7 +38,7 @@ var userSchema = new Schema({
         default: 'normal'
     },
     userPass: String,
-});
+},{timestamps:true});
 userSchema.pre('save',async function() {
     // Don't increment if this is NOT a newly created document
     if(!this.isNew) return;
@@ -67,7 +67,7 @@ var projectSchema = new Schema({
             return [];
         }
     }
-});
+},{timestamps:true});
 var Project = mongoose.model('Project', projectSchema);
 
 

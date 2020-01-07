@@ -49,7 +49,15 @@
             }
             this.checkRemberInfo()
         },
+        mounted(){
+		    document.body.addEventListener('keyup',this.proxyEnter)
+        },
         methods: {
+			proxyEnter(e){
+				if(e.key === 'Enter'){
+					this.loginClick()
+				}
+            },
 		    checkRemberInfo(){
                 let pid = window.localStorage.getItem('pid');
                 let psw = window.localStorage.getItem('psw');
@@ -173,6 +181,9 @@
                 }
             }
         },
+        beforeDestroy() {
+	        document.body.removeEventListener('keyup',this.proxyEnter)
+        }
 	}
 </script>
 

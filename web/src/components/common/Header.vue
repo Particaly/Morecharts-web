@@ -108,7 +108,15 @@
                         oldpsw,newpsw
                     }
                 }).then( d =>{
-                    console.log(d)
+                	d = d.data;
+	                this.loading=false;
+                    if(d.data.status === 1){
+	                    this.$Message.success(d.data.msg);
+	                    this.showModel = false;
+                    }else{
+	                    this.$Message.error(d.data.msg);
+                    }
+	                this.$nextTick(()=>{this.loading=true;})
                 })
             }
         },
