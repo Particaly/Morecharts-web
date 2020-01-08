@@ -50,7 +50,8 @@ router.post('/api/isLogin', function (req, res, next) {
 });
 
 router.post('/api/getProjectList',function (req,res,next) {
-	getProjectList(req,res,next)
+	getProjectList(req,res,next);
+	res.send()
 });
 
 

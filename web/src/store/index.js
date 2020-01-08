@@ -55,7 +55,8 @@ export default new Vuex.Store({
 					commit('loginJudge',{isLogin: true,loginInfo: {
 						...d.data.userInfo,
 						type: d.data.userType,
-						id: d.data.userId
+						id: d.data.userId,
+						createdAt:new Date(d.data.createdAt).toLocaleDateString()
 					}})
 				}else{
 					window.localStorage.removeItem('Ltoken');

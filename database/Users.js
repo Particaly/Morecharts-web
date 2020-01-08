@@ -146,10 +146,12 @@ function getUserInfo(req,res,next){
 		},function (err, user) {
 			if(err) return console.log(err);
 			if(user.length){
+				console.log(user[0]);
 				res.send({
 					userInfo: user[0].userInfo,
 					userType: user[0].userType,
-					userId: user[0].userId
+					userId: user[0].userId,
+					createdAt: user[0].createdAt
 				})
 			}else{
 				res.send({
