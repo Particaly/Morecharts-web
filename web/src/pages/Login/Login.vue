@@ -6,11 +6,11 @@
             <div class="login-board-inputer">
                 <div class="login-input-holder">
                     <img src="@/assets/login/image/icon_dl_zh.png">
-                    <input type="text" v-model="pid" @blur="checkpid" placeholder="请输入账号" />
+                    <input type="text" :maxlength="12" v-model="pid" @blur="checkpid" placeholder="请输入账号" />
                 </div>
                 <div class="login-input-holder">
                     <img src="@/assets/login/image/icon_dl_mm.png">
-                    <input type="password" v-model="psw" @blur="checkpsw" placeholder="请输入密码" />
+                    <input type="password" :maxlength="18" v-model="psw" @blur="checkpsw" placeholder="请输入密码" />
                 </div>
                 <div class="login-input-holder" v-if="!log">
                     <img src="@/assets/login/image/email.png" style="width: 17px;left: 4px;top: 8px;">
@@ -55,7 +55,9 @@
         methods: {
 			proxyEnter(e){
 				if(e.key === 'Enter'){
-					this.loginClick()
+					this.log?
+						this.loginClick():
+                        this.registerClick()
 				}
             },
 		    checkRemberInfo(){
@@ -79,8 +81,9 @@
                 }
             },
 	        loginClick(){
-		        this.checkpid();
-                this.checkpsw();
+		        if(!this.checkpid()||!this.checkpsw()){
+			        return false
+		        }
                 if(this.remenberPassword){
                     window.localStorage.setItem('pid',this.pid);
                     window.localStorage.setItem('psw',this.psw);
@@ -106,9 +109,9 @@
                 })
             },
 	        registerClick(){
-		        this.checkpid();
-		        this.checkpsw();
-		        this.checkpem();
+		        if(!this.checkpid()||!this.checkpsw()||!this.checkpem()){
+			        return false
+                }
                 if(this.remenberPassword){
                     window.localStorage.setItem('pid',this.pid);
                     window.localStorage.setItem('psw',this.psw);
@@ -122,14 +125,14 @@
                         pem: this.pem
                     }
                 }).then(d => {
-                    d = d.data;
+                    d = d.data.data;
                     if(d.status !== 1){
                         this.errormsg(d.msg)
                     }else{
                         this.$Message.success(d.msg);
                         localStorage.setItem('Ltoken',d.token);
                         this.$store.commit('changeLoginStatus', true);
-                        this.$router.push('/')
+                        this.$router.push('/');
                         this.$store.dispatch('loginJudge')
                     }
                 })

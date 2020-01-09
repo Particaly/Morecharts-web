@@ -70,5 +70,4 @@ var projectSchema = new Schema({
 },{timestamps:true});
 var Project = mongoose.model('Project', projectSchema);
 
-
 module.exports = { Token, User, Project };

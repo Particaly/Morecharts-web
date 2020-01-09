@@ -79,7 +79,11 @@ function createUser(data, callback){
 		let postdata = {};
 		if(!user.length){
 			var newuser = new User({
-				userName: data.pid,
+				userInfo: {
+					name: data.pid,
+					email: data.pem,
+					phone: ''
+				},
 				userEmail: data.pem,
 				userPass: utility.md5(data.psw)
 			});
@@ -146,7 +150,6 @@ function getUserInfo(req,res,next){
 		},function (err, user) {
 			if(err) return console.log(err);
 			if(user.length){
-				console.log(user[0]);
 				res.send({
 					userInfo: user[0].userInfo,
 					userType: user[0].userType,

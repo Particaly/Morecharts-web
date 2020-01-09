@@ -26,6 +26,16 @@ export default [
         meta: {
             encryption: true
         },
-        component: () => import('@p/DashBoard/DashBoard')
+        component: () => import('@p/DashBoard/DashBoard'),
+        children: [
+            {
+                path: '/dashboard/*',
+                name: 'project',
+                meta: {
+                    encryption: true
+                },
+                component: () => import('@p/DashBoard/DashBoard'),
+            }
+        ]
     }
 ]
