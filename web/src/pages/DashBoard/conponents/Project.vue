@@ -47,9 +47,6 @@
         props: {
 			renderObject:Object
         },
-        mounted(){
-		    console.log(this.renderObject);
-        },
         computed:{
 	        userInfo(){
 		        return this.$store.state.loginInfo

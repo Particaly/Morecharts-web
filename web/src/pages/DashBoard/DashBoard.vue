@@ -26,6 +26,7 @@
 <script>
     import MakeNewProject from '@cc/MakeNewProject.vue'
     import Project from './conponents/Project'
+    import Charts from './conponents/Charts'
     export default {
         name: "DashBoard",
 		data:function(){
@@ -41,8 +42,17 @@
 		    }
 		},
         watch: {
-            '$route.path':function (newval) {
-                console.log(newval);
+            '$route.name':{
+	            handler: function (newval) {
+	            	console.log(newval);
+                    if(newval === 'dashboard'){
+	                    this.content = Project;
+	                    this.getProjectList();
+                    }else if(newval === 'project'){
+                        this.content = Charts;
+                    }
+	            },
+                immediate: true
             }
         },
         components:{
@@ -60,9 +70,7 @@
 	    },
 		created() {
         	window.ds = this;
-			this.content = Project;
 			this.$store.dispatch('getUserInfo');
-            this.getProjectList()
         },
         mounted() {
         	this.renderObject.choosedItem = 1;
