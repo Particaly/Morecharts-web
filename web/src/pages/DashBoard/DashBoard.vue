@@ -11,7 +11,11 @@
             </div>
         </div>
         <transition name="fade-in" mode="out-in">
-            <component v-bind:is="content" :renderObject="renderObject" @showModel="showModel=true"></component>
+            <component v-bind:is="content"
+                       :renderObject="renderObject"
+                       @showModel="showModel=true"
+                       @triggerOrder="takeOrder"
+            ></component>
         </transition>
         <Modal v-model="showModel" title="创建新项目" :loading="loading" :width="450" @on-ok="buildNewProject">
             <MakeNewProject ref="dom_new"></MakeNewProject>
@@ -33,6 +37,7 @@
                 content: null,
 			    showModel: false,
 			    loading: true,
+			    lastOrder: null
 		    }
 		},
         components:{
@@ -50,11 +55,11 @@
 	    },
 		created() {
         	window.ds = this;
+			this.content = Project;
 			this.$store.dispatch('getUserInfo');
             this.getProjectList()
         },
         mounted() {
-        	this.content = Project;
         	this.renderObject.choosedItem = 1;
         },
 		methods:{
@@ -92,6 +97,26 @@
             },
 			showProject(project){
                 this.$router.push('/dashboard/'+project.projectName)
+            },
+			takeOrder(name){
+            	if(name === this.lastOrder){
+		            this.renderObject.ownerProjects = this.renderObject.ownerProjects.reverse();
+		            return
+                }else{
+            		this.lastOrder = name;
+                }
+            	let flag = '';
+            	switch (name) {
+                    case '最后修改':
+                    	flag = 'createdAt';
+                        break;
+                    case '创建时间':
+	                    flag = 'updatedAt';
+                    	break;
+	            }
+	            this.renderObject.ownerProjects.sort((a,b) => {
+	                return new Date(b[flag]).getTime()- new Date(a[flag]).getTime();
+	            })
             }
 		},
         filters:{

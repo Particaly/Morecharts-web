@@ -7,17 +7,31 @@
             <div class="card-item"
                  @click="renderObject.choosedItem=2"
                  :class="{'choosed':renderObject.choosedItem===2}" ref="item2">我参与的项目</div>
+            <div class="right-banner">
+                <Dropdown placement="bottom-end" @on-click="(params) => {
+                    $emit('triggerOrder',params)
+                }">
+                    <div style="cursor: pointer">
+                        排序
+                        <Icon type="ios-arrow-down"></Icon>
+                    </div>
+                    <DropdownMenu slot="list">
+                        <DropdownItem name="最后修改">最后修改</DropdownItem>
+                        <DropdownItem name="创建时间">创建时间</DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            </div>
             <div class="bottom-pane" :style="{width: getItemWidth,left:getItemLeft}"></div>
         </div>
-        <transition-group tag="div" class="card padding" style="margin-top: 10px">
-            <div class="new-project" @click="$emit('showModel')">
+        <transition-group tag="div" name="listash" class="card padding" style="margin-top: 10px">
+            <div class="new-project" @click="$emit('showModel')" :key="'add'">
                 <Icon type="md-add" />
                 <div class="title">创建一个新项目</div>
             </div>
             <div class="card-project"
-                 v-for="(val,key) in renderObject.ownerProjects"
+                 v-for="val in renderObject.ownerProjects"
                  @click="$parent.showProject(val)"
-                 :key="key"
+                 :key="val._id"
             >
                 <div class="img-holder">
                     <img src="@/assets/common/project.png" alt="">
@@ -34,17 +48,20 @@
         props: {
 			renderObject:Object
         },
+        mounted(){
+		    console.log(this.renderObject);
+        },
         computed:{
 	        userInfo(){
 		        return this.$store.state.loginInfo
 	        },
 	        getItemWidth(){
-		        return this.$refs['item'+this.choosedItem]?.clientWidth+'px'
+		        return this.$refs['item'+this.renderObject.choosedItem]?.clientWidth+'px'
 	        },
 	        getItemLeft(){
-		        return this.$refs['item'+this.choosedItem]?.offsetLeft+'px'
+		        return this.$refs['item'+this.renderObject.choosedItem]?.offsetLeft+'px'
 	        }
-        }
+        },
 	}
 </script>
 
@@ -147,5 +164,18 @@
             margin-top: 30px;
         }
     }
+}
+.right-banner{
+    position: absolute;
+    padding-right: 15px;
+    right: 0;
+}
+
+.listash-enter, .listash-leave-to{
+    opacity: 0;
+    transform: translateY(30px);
+}
+.listash-leave-active {
+    position: absolute;
 }
 </style>
