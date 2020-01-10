@@ -31,7 +31,7 @@
             <div class="login-btn" v-if="!isLogin" @click="goLogin">
                 登录
             </div>
-            <Dropdown v-if="isLogin" @on-click="checkPage">
+            <Dropdown v-if="isLogin" @on-click="checkPage" placement="bottom-end">
                 <div class="user-icon" :xixi="userInfo.name+''">
                     {{userInfo.name|firstWord}}
                 </div>

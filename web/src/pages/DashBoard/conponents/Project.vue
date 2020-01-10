@@ -28,16 +28,15 @@
                 <Icon type="md-add" />
                 <div class="title">创建一个新项目</div>
             </div>
-            <div class="card-project"
+            <router-link tag="div" :to="'/dashboard/'+val.projectName" class="card-project"
                  v-for="val in renderObject.ownerProjects"
-                 @click="$parent.showProject(val)"
                  :key="val._id"
             >
                 <div class="img-holder">
                     <img src="@/assets/common/project.png" alt="">
                 </div>
                 <div class="title">{{val.projectName}}</div>
-            </div>
+            </router-link>
         </transition-group>
     </div>
 </template>

@@ -40,6 +40,11 @@
 			    lastOrder: null
 		    }
 		},
+        watch: {
+            '$route.path':function (newval) {
+                console.log(newval);
+            }
+        },
         components:{
 	        MakeNewProject
         },
@@ -94,9 +99,6 @@
 					}
 					this.$nextTick(()=>{this.loading=true;})
 				})
-            },
-			showProject(project){
-                this.$router.push('/dashboard/'+project.projectName)
             },
 			takeOrder(name){
             	if(name === this.lastOrder){
