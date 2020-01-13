@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 let {
 	checkUser, generateToken, createUser, changepassword,
-	getUserInfo, getProjectList, createNewProject, getChartsInfo
+	getUserInfo, getProjectList, createNewProject, getChartsInfo,
+	updateChart, getChartInfo
 } = require('../database');
 let { getBody } = require('../util');
 
@@ -45,20 +46,28 @@ router.post('/api/register', function(req, res, next) {
 	})
 });
 
-router.post('/api/isLogin', function (req, res, next) {
+router.post('/api/isLogin', function(req, res, next) {
 	res.send()
 });
 
-router.post('/api/getProjectList',function (req,res,next) {
+router.post('/api/getProjectList',function(req,res,next) {
 	getProjectList(req,res,next);
 });
 
-router.post('/api/createNewProject', function (req, res,next) {
+router.post('/api/createNewProject', function(req, res,next) {
 	createNewProject(req,res,next);
 });
 
-router.post('/api/getChartsInfo', function (req, res, next) {
+router.post('/api/getChartsInfo', function(req, res, next) {
 	getChartsInfo(req, res, next);
+});
+
+router.post('/api/getChartInfo', function(req, res, next) {
+	getChartInfo(req, res, next);
+});
+
+router.post('/api/updateChart', function(req, res, next) {
+	updateChart(req,res,next)
 });
 
 module.exports = router;

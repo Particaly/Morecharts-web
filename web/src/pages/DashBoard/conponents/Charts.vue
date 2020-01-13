@@ -75,7 +75,7 @@
 		        })
 	        },
 	        createNewCharts(){
-
+                this.$router.push('/editor?project='+this.projectName+ '&'+'name=new')
             },
 	        getChartsInfo(){
                 this.axios({

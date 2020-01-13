@@ -71,7 +71,6 @@ var projectSchema = new Schema({
 var Project = mongoose.model('Project', projectSchema);
 
 var chartSchema = new Schema({
-    chartId: String,
     chartInfo: {
         img: String,
         name: String,

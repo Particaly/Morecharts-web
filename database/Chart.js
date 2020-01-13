@@ -34,8 +34,55 @@ function getChartsInfo(req, res, next) {
 	}
 }
 
-function createNewChart(req, res, next) {
-
+function updateChart(req, res, next) {
+	if(!res.tempRes||!res.tempRes.loginInfo||res.tempRes.loginInfo.status!==1){
+		res.send();
+	}else{
+		let data = getBody(req);
+		if(!data.id){
+			let newChart = new Chart({
+				chartInfo:{
+					name: data.name,
+					code: data.code,
+					tag: data.tag
+				}
+			});
+			newChart.save();
+			res.send({
+				id: newChart._id.toString(),
+				status: 1,
+				msg: '保存成功'
+			});
+		}
+	}
 }
 
-module.exports = { getChartsInfo, createNewChart };
+function getChartInfo(req, res, next){
+	if(!res.tempRes||!res.tempRes.loginInfo||res.tempRes.loginInfo.status!==1){
+		res.send();
+	}else{
+		let query = Chart.findOne({
+			'_id': getBody(req).id
+		});
+		query.exec(function (err, data) {
+			if(err) return console.log(err);
+			if(data){
+				res.send({
+					...data.chartInfo,
+					id: data._id.toString(),
+					createdAt: data.createdAt,
+					updatedAt: data.updatedAt
+				})
+			}else{
+				res.send({
+					status: 404,
+					msg: '找不到图表'
+				})
+			}
+		})
+	}
+}
+
+
+
+module.exports = { getChartsInfo, getChartInfo, updateChart };

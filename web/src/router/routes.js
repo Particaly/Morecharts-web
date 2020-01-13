@@ -37,5 +37,13 @@ export default [
                 component: () => import('@p/DashBoard/DashBoard'),
             }
         ]
+    },
+    {
+        path: '/editor',
+        name: 'editor',
+        meta: {
+            encryption: true
+        },
+        component: () => import('@p/Editor/Editor')
     }
 ]
