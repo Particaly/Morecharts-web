@@ -11,20 +11,12 @@
             </div>
         </div>
         <transition name="fade-in" mode="out-in">
-            <component v-bind:is="content"
-                       :renderObject="renderObject"
-                       @showModel="showModel=true"
-                       @triggerOrder="takeOrder"
-            ></component>
+            <component v-bind:is="content"></component>
         </transition>
-        <Modal v-model="showModel" title="创建新项目" :loading="loading" :width="450" @on-ok="buildNewProject">
-            <MakeNewProject ref="dom_new"></MakeNewProject>
-        </Modal>
 	</main>
 </template>
 
 <script>
-    import MakeNewProject from '@cc/MakeNewProject.vue'
     import Project from './conponents/Project'
     import Charts from './conponents/Charts'
     export default {
@@ -36,9 +28,6 @@
 				    choosedItem: 0,
                 },
                 content: null,
-			    showModel: false,
-			    loading: true,
-			    lastOrder: null
 		    }
 		},
         watch: {
@@ -47,16 +36,12 @@
 	            	console.log(newval);
                     if(newval === 'dashboard'){
 	                    this.content = Project;
-	                    this.getProjectList();
                     }else if(newval === 'project'){
                         this.content = Charts;
                     }
 	            },
                 immediate: true
             }
-        },
-        components:{
-	        MakeNewProject
         },
 	    computed:{
 		    userInfo(){
@@ -72,63 +57,6 @@
         	window.ds = this;
 			this.$store.dispatch('getUserInfo');
         },
-        mounted() {
-        	this.renderObject.choosedItem = 1;
-        },
-		methods:{
-            getProjectList(){
-				this.axios({
-					method:'post',
-					url: window.apiURL + 'getProjectList'
-				}).then(d => {
-					d = d.data;
-					this.renderObject.ownerProjects = d.data;
-				})
-			},
-			buildNewProject(){
-				let name = this.$refs.dom_new.name,
-					describe = this.$refs.dom_new.discribe;
-				if(!name){this.loading=false;this.$Message.error('请输入项目名称');this.$nextTick(()=>{this.loading=true;});return}
-				this.axios({
-					url: window.apiURL + 'createNewProject',
-					method: 'post',
-					data: {
-						name,describe
-					}
-				}).then( d =>{
-					d = d.data;
-					this.loading=false;
-					if(d.data.status === 1){
-						this.$Message.success(d.data.msg);
-						this.showModel = false;
-						this.getProjectList();
-					}else{
-						this.$Message.error(d.data.msg);
-					}
-					this.$nextTick(()=>{this.loading=true;})
-				})
-            },
-			takeOrder(name){
-            	if(name === this.lastOrder){
-		            this.renderObject.ownerProjects = this.renderObject.ownerProjects.reverse();
-		            return
-                }else{
-            		this.lastOrder = name;
-                }
-            	let flag = '';
-            	switch (name) {
-                    case '最后修改':
-                    	flag = 'createdAt';
-                        break;
-                    case '创建时间':
-	                    flag = 'updatedAt';
-                    	break;
-	            }
-	            this.renderObject.ownerProjects.sort((a,b) => {
-	                return new Date(b[flag]).getTime()- new Date(a[flag]).getTime();
-	            })
-            }
-		},
         filters:{
 		    firstWord(word){
 			    return word?.toString().charAt(0).toUpperCase()

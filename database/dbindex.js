@@ -70,4 +70,15 @@ var projectSchema = new Schema({
 },{timestamps:true});
 var Project = mongoose.model('Project', projectSchema);
 
-module.exports = { Token, User, Project };
+var chartSchema = new Schema({
+    chartId: String,
+    chartInfo: {
+        img: String,
+        name: String,
+        code: String,
+        tag: Array
+    }
+},{timestamps: true});
+var Chart = mongoose.model('Chart', chartSchema);
+
+module.exports = { Token, User, Project, Chart };

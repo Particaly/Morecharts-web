@@ -2,15 +2,13 @@
     <div class="content">
         <div class="card">
             <div class="card-item"
-                 @click="renderObject.choosedItem=1"
-                 :class="{'choosed':renderObject.choosedItem===1}" ref="item1">我创建的项目</div>
+                 @click="choosedItem=1"
+                 :class="{'choosed':choosedItem===1}" ref="item1">我创建的项目</div>
             <div class="card-item"
-                 @click="renderObject.choosedItem=2"
-                 :class="{'choosed':renderObject.choosedItem===2}" ref="item2">我参与的项目</div>
+                 @click="choosedItem=2"
+                 :class="{'choosed':choosedItem===2}" ref="item2">我参与的项目</div>
             <div class="right-banner">
-                <Dropdown placement="bottom-end" @on-click="(params) => {
-                    $emit('triggerOrder',params)
-                }">
+                <Dropdown placement="bottom-end" @on-click="takeOrder">
                     <div style="cursor: pointer">
                         排序
                         <Icon type="ios-arrow-down"></Icon>
@@ -24,12 +22,12 @@
             <div class="bottom-pane" :style="{width: getItemWidth,left:getItemLeft}"></div>
         </div>
         <transition-group tag="div" name="listash" class="card padding" style="margin-top: 10px">
-            <div class="new-project" @click="$emit('showModel')" :key="'add'">
+            <div class="new-project" @click="showModel = true" :key="'add'">
                 <Icon type="md-add" />
                 <div class="title">创建一个新项目</div>
             </div>
             <router-link tag="div" :to="'/dashboard/'+val.projectName" class="card-project"
-                 v-for="val in renderObject.ownerProjects"
+                 v-for="val in ownerProjects"
                  :key="val._id"
             >
                 <div class="img-holder">
@@ -38,24 +36,97 @@
                 <div class="title">{{val.projectName}}</div>
             </router-link>
         </transition-group>
+        <Modal v-model="showModel" title="创建新项目" :loading="loading" :width="450" @on-ok="buildNewProject">
+            <MakeNewProject ref="dom_new"></MakeNewProject>
+        </Modal>
     </div>
 </template>
 
 <script>
+	import MakeNewProject from '@cc/MakeNewProject.vue'
 	export default {
 		name: "Project",
-        props: {
-			renderObject:Object
+        data: function(){
+            return {
+	            ownerProjects: {},
+	            choosedItem: 0,
+	            showModel: false,
+	            loading: true,
+	            lastOrder: null
+            }
         },
+		components:{
+			MakeNewProject
+		},
         computed:{
 	        userInfo(){
 		        return this.$store.state.loginInfo
 	        },
 	        getItemWidth(){
-		        return this.$refs['item'+this.renderObject.choosedItem]?.clientWidth+'px'
+		        return this.$refs['item'+this.choosedItem]?.clientWidth+'px'
 	        },
 	        getItemLeft(){
-		        return this.$refs['item'+this.renderObject.choosedItem]?.offsetLeft+'px'
+		        return this.$refs['item'+this.choosedItem]?.offsetLeft+'px'
+	        }
+        },
+        created(){
+	        this.getProjectList();
+        },
+        mounted(){
+	        this.choosedItem = 1;
+        },
+        methods: {
+	        getProjectList(){
+		        this.axios({
+			        method:'post',
+			        url: window.apiURL + 'getProjectList'
+		        }).then(d => {
+			        d = d.data;
+			        this.ownerProjects = d.data;
+		        })
+	        },
+	        buildNewProject(){
+		        let name = this.$refs.dom_new.name,
+			        describe = this.$refs.dom_new.discribe;
+		        if(!name){this.loading=false;this.$Message.error('请输入项目名称');this.$nextTick(()=>{this.loading=true;});return}
+		        this.axios({
+			        url: window.apiURL + 'createNewProject',
+			        method: 'post',
+			        data: {
+				        name,describe
+			        }
+		        }).then( d =>{
+			        d = d.data;
+			        this.loading=false;
+			        if(d.data.status === 1){
+				        this.$Message.success(d.data.msg);
+				        this.showModel = false;
+				        this.getProjectList();
+			        }else{
+				        this.$Message.error(d.data.msg);
+			        }
+			        this.$nextTick(()=>{this.loading=true;})
+		        })
+	        },
+	        takeOrder(name){
+		        if(name === this.lastOrder){
+			        this.ownerProjects = this.ownerProjects.reverse();
+			        return
+		        }else{
+			        this.lastOrder = name;
+		        }
+		        let flag = '';
+		        switch (name) {
+			        case '最后修改':
+				        flag = 'createdAt';
+				        break;
+			        case '创建时间':
+				        flag = 'updatedAt';
+				        break;
+		        }
+		        this.ownerProjects.sort((a,b) => {
+			        return new Date(b[flag]).getTime()- new Date(a[flag]).getTime();
+		        })
 	        }
         },
 	}

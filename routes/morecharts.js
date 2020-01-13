@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 let {
 	checkUser, generateToken, createUser, changepassword,
-	getUserInfo, getProjectList, createNewProject
+	getUserInfo, getProjectList, createNewProject, getChartsInfo
 } = require('../database');
 let { getBody } = require('../util');
 
@@ -54,7 +54,11 @@ router.post('/api/getProjectList',function (req,res,next) {
 });
 
 router.post('/api/createNewProject', function (req, res,next) {
-	createNewProject(req,res,next)
+	createNewProject(req,res,next);
+});
+
+router.post('/api/getChartsInfo', function (req, res, next) {
+	getChartsInfo(req, res, next);
 });
 
 module.exports = router;
