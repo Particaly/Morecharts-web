@@ -2,13 +2,14 @@
     <main class="container">
         <Split v-model="split">
             <div slot="left" class="js-editor" id="editor"></div>
-            <div slot="right" class="split-pane"></div>
+            <div slot="right" class="charter" ref="chart"></div>
         </Split>
+        <div class="update-img" @click="updateImg">更新缩略图</div>
     </main>
 </template>
 
 <script>
-    let editor,chart,savetimer;
+    let editor,chart,savetimer,resizetimer;
 	export default {
 		name: "Editor",
         data: function(){
@@ -19,12 +20,27 @@
                 id:''
             }
         },
+        watch:{
+	        split:function () {
+                if(chart){
+                	if(resizetimer){
+                		clearTimeout(resizetimer)
+                    }
+	                resizetimer = setTimeout(() => {
+		                chart.resize()
+	                },300)
+                }
+	        }
+        },
         computed:{
 			query: function() {
 				return this.$route.query
             },
         },
         created() {
+			if(this.query.id){
+				this.id = this.query.id
+            }
 			window.ds = this;
 			let id = window.sessionStorage.getItem(window.location.href);
 			if(id){
@@ -111,8 +127,7 @@
             	});
             },
 	        getChartInfo(){
-            	console.log(this.id);
-            	if(this.query.chart === undefined && !this.id){
+            	if(!this.id){
             		let header = `/*\n* @name: ${this.query.name}\n`;
             		let type = `* @type: echarts\n`;
             		let tag = `* @tag: \n*/\n\n`;
@@ -129,34 +144,70 @@
 				            id: this.id
 			            }
 		            }).then(d => {
-			            d = d.data;
-			            console.log(d);
-			            let text = `/*\n* @name: ${this.query.name}\n*/\n\n`;
-			            this.generateWord(text);
+			            d = d.data.data;
+			            this.generateWord(d.code);
 			            this.value = editor.getValue();
 			            this.addListenerToEditor()
 		            })
                 }
             },
 	        triggerSave(params){
-            	console.log(params);
-                console.log('saved');
+		        this.runScripts();
                 this.axios({
                     method: 'post',
-                    data:{...params,code:this.value},
+                    data:{...params,code:this.value,project: this.query.project,id:this.id},
                     url: window.apiURL + 'updateChart'
                 }).then(d => {
                 	d = d.data.data;
                 	if(d.status === 1){
                 		let url = window.location.href;
                 		window.sessionStorage.setItem(url,d.id);
+                		if(!this.id){
+                			this.id = d.id;
+                        }
                     }else{
                 		this.$Message.error(d.msg)
                     }
-                	console.log(d);
-                })
+                });
+            },
+            runScripts(){
+            	let chartoption;
+            	let builder = this.value + `;\nchartoption = option;`;
+            	try{
+		            eval(builder);
+		            if(chart){
+			            this.$echarts.dispose(chart)
+                    }
+                    chart = this.$echarts.init(this.$refs.chart);
+                    chart.setOption(chartoption);
+                }catch (e) {
+                    console.log(e);
+	            }
+            },
+	        updateImg(){
+            	if(chart){
+		            let img = chart.getDataURL();
+		            this.axios({
+			            method: 'post',
+			            url: window.apiURL + 'updateImg',
+			            data: {
+				            id: this.id,
+				            img,
+			            }
+		            }).then(d => {
+
+		            })
+                }
             }
         },
+        beforeRouteLeave(to,from,next){
+			try {
+				window.sessionStorage.removeItem(window.location.href);
+                next()
+			}catch (e) {
+                next()
+			}
+        }
 	}
 </script>
 
@@ -169,6 +220,21 @@
         background-color: #2c3437;
         text-align: left;
         font-size: 18px;
+    }
+    .charter{
+        height: 100%;
+    }
+    .update-img{
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: rgba(255,255,255,.7);
+        line-height: 60px;
+        padding: 0 15px;
+        cursor: pointer;
+        &:hover{
+            color: #fff;
+        }
     }
 }
 </style>

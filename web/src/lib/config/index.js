@@ -7,11 +7,13 @@ axios.defaults.withCredentials = true;
 axios.defaults.crossDomain = true;
 // 添加请求拦截器
 axios.interceptors.request.use((config) => {
-	config.headers = {'Content-Type':'application/x-www-form-urlencoded'};
-	config.data = qs.stringify(config.data, {arrayFormat: 'brackets'});
 	let token = window.localStorage.getItem('Ltoken');
 	if(token){
 		config.headers.Authorization = token;
+	}
+	if(!config.headers){
+		config.headers = {'Content-Type':'application/x-www-form-urlencoded'};
+		config.data = qs.stringify(config.data, {arrayFormat: 'brackets'});
 	}
 	return config;
 });

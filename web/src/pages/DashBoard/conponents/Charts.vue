@@ -20,14 +20,16 @@
                 <Icon type="md-add" />
                 <div class="title">创建一个新图表</div>
             </div>
-            <router-link tag="div" :to="'/dashboard/'+val.projectName" class="card-project"
+            <router-link tag="div"
+                         class="card-project"
                          v-for="val in charts"
                          :key="val._id"
+                         :to="getlink(val)"
             >
                 <div class="img-holder">
-                    <img src="@/assets/common/project.png" alt="">
+                    <img :src="val.chartInfo.img" alt="">
                 </div>
-                <div class="title">{{val.projectName}}</div>
+                <div class="title">{{val.chartInfo.name}}</div>
             </router-link>
         </transition-group>
     </div>
@@ -85,9 +87,13 @@
                     	name: this.projectName
                     }
                 }).then(d => {
-                	d = d.data;
+                	d = d.data.data;
+                    this.charts = d;
                 	console.log(d);
                 })
+            },
+            getlink(val){
+	        	return `/editor?project=${val.chartInfo.project}&name=${val.chartInfo.name}&id=${val._id}`
             }
         },
 	}

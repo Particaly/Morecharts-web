@@ -3,7 +3,7 @@ var router = express.Router();
 let {
 	checkUser, generateToken, createUser, changepassword,
 	getUserInfo, getProjectList, createNewProject, getChartsInfo,
-	updateChart, getChartInfo
+	updateChart, getChartInfo, updateImg
 } = require('../database');
 let { getBody } = require('../util');
 
@@ -68,6 +68,10 @@ router.post('/api/getChartInfo', function(req, res, next) {
 
 router.post('/api/updateChart', function(req, res, next) {
 	updateChart(req,res,next)
+});
+
+router.post('/api/updateImg',function (req, res, next) {
+	updateImg(req, res, next);
 });
 
 module.exports = router;

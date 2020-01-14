@@ -75,7 +75,8 @@ var chartSchema = new Schema({
         img: String,
         name: String,
         code: String,
-        tag: Array
+        tag: Array,
+	    project: String
     }
 },{timestamps: true});
 var Chart = mongoose.model('Chart', chartSchema);

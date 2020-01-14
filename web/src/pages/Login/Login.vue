@@ -6,7 +6,7 @@
             <div class="login-board-inputer">
                 <div class="login-input-holder">
                     <img src="@/assets/login/image/icon_dl_zh.png">
-                    <input type="text" :maxlength="12" v-model="pid" @blur="checkpid" placeholder="请输入账号" />
+                    <input type="text" :maxlength="18" v-model="pid" @blur="checkpid" placeholder="请输入账号" />
                 </div>
                 <div class="login-input-holder">
                     <img src="@/assets/login/image/icon_dl_mm.png">

@@ -19,7 +19,7 @@ app.set('view engine', 'pug');
 app.set('jwtTokenSecret', 'YOUR_SCRET_STRING');
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({limit: '2mb', extended: true }));
 app.use(cookieParser());
 app.use(sassMiddleware({
   src: path.join(__dirname, 'public'),
