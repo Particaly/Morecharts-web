@@ -43,7 +43,7 @@
 	flex-wrap: wrap;
 	margin: 0 auto;
 	width: 1180px;
-	height: 100%;
+	height: calc(100% - 60px);
 	.filter-bar {
 		margin-top: 20px;
 		padding: 20px;

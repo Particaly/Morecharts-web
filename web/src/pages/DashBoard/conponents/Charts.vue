@@ -27,9 +27,9 @@
                          :to="getlink(val)"
             >
                 <div class="img-holder">
-                    <img :src="val.chartInfo.img" alt="">
+                    <img :src="env==='serve'?require('@/assets/common/chart.png'):val.chartInfo.img" alt="">
                 </div>
-                <div class="title">{{val.chartInfo.name}}</div>
+                <div class="label-name">{{val.chartInfo.name}}</div>
             </router-link>
         </transition-group>
     </div>
@@ -41,7 +41,8 @@
         data: function(){
             return {
                 charts: [],
-	            lastOrder: null
+	            lastOrder: null,
+                env:process.env.VUE_APP_ENVIROMENT
             }
         },
 		computed:{
@@ -53,6 +54,7 @@
             }
 		},
         created(){
+			console.log(this.env);
 			this.getChartsInfo();
         },
         methods: {
@@ -161,21 +163,19 @@
             width: 250px;
             background: #fff;
             color: #2d8cf0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            padding: 30px 0;
+            overflow: hidden;
+            padding: 10px 0 50px 0;
             border-radius: 5px;
             cursor: pointer;
-            filter: grayscale(100%);
+            /*filter: grayscale(100%);*/
             transition: all .4s;
             position: relative;
             .img-holder{
-                height: 100px;
-                width: 100px;
+                height: 100%;
+                width: 100%;
                 border-radius: 10px;
                 overflow: hidden;
+                transition: all .4s;
                 img{
                     object-fit: cover;
                     width: 100%;
@@ -183,7 +183,18 @@
                 }
             }
             &:hover{
-                filter: grayscale(0%);
+                .img-holder{
+                    transform: scale(1.05);
+                }
+                filter: drop-shadow(0px 0px 5px rgba(42, 168, 225,0.4));
+            }
+            .label-name{
+                width: 100%;
+                color: rgba(0,0,0,.7);
+                font-size: 16px;
+                position: absolute;
+                bottom: 0;
+                padding: 10px 20px;
             }
         }
         &>div{

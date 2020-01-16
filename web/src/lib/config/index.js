@@ -37,26 +37,22 @@ axios.interceptors.response.use(function (response) {
 	return Promise.reject(error);
 });
 
-if(process.env.NODE_ENV === 'production'){
-	window.apiURL = 'http://118.24.108.165:3000/morecharts/api/';
-	window.apiURL = 'http://localhost:3000/morecharts/api/'
-}else{
-	window.apiURL = '/app/'
-}
-let version = process.env.VUE_APP_SERVION;
-document.title += (' --'+version);
-window.baseurl = process.env.BASE_URL;
-
-if(process.env.VUE_APP_ENVIROMENT !== 'build'){
-	/*
-	* 测试服
-	* */
+if (process.env.VUE_APP_ENVIROMENT === 'serve'){
+	
+	window.apiURL = '/app/';
+	
+}else if (process.env.VUE_APP_ENVIROMENT === 'build-dev'){
+	
 	console.log('running in development');
-}else{
-	/*
-	* 正式服
-	* */
+	window.apiURL = 'http://localhost:3000/morecharts/api/';
+	
+}else if (process.env.VUE_APP_ENVIROMENT === 'build'){
+	
 	console.log('running in production');
+	window.apiURL = 'http://118.24.108.165:3000/morecharts/api/';
+	
 }
+
+window.baseurl = process.env.BASE_URL;
 
 export { axios, store, router }

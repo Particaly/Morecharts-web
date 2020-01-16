@@ -64,10 +64,12 @@ async function getChartsInfo(req, res, next) {
 	}
 }
 
-function updateChart(req, res, next) {
+async function updateChart(req, res, next) {
 	if(!res.tempRes||!res.tempRes.loginInfo||res.tempRes.loginInfo.status!==1){
 		res.send();
 	}else{
+		let info = await getUserInfo(req.decode_token.pid);
+		let name = info.userInfo.name;
 		let data = getBody(req);
 		if(!data.id){
 			let newChart = new Chart({
@@ -81,7 +83,7 @@ function updateChart(req, res, next) {
 			newChart.save();
 			Project.findOne({
 				'$and':[{
-					'auther': req.decode_token.pid,
+					'auther': name,
 					'projectName': data.project
 				}]
 			},function (err, result) {
@@ -160,7 +162,7 @@ function updateImg(req, res, next){
 			},function (err, result) {
 				if(err) return console.log(err);
 				if(result.chartInfo.img){
-				
+					delFile(path.join(imgurl,result.chartInfo.img))
 				}
 				let imgData = data.img.replace(/^data:image\/\w+;base64,/, '');
 				let dataBuffer = new Buffer.from(imgData, 'base64');
