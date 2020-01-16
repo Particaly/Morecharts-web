@@ -146,7 +146,10 @@ function getUserInfo(req,res,next){
 		res.send();
 	}else{
 		User.find({
-			'userInfo.name': req.decode_token.pid
+			$or: [
+				{'userInfo.name': req.decode_token.pid},
+				{'userInfo.email': req.decode_token.pid}
+			]
 		},function (err, user) {
 			if(err) return console.log(err);
 			if(user.length){

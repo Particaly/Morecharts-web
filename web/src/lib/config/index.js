@@ -38,7 +38,8 @@ axios.interceptors.response.use(function (response) {
 });
 
 if(process.env.NODE_ENV === 'production'){
-	window.apiURL = 'http://118.24.108.165:3000/morecharts/api/'
+	window.apiURL = 'http://118.24.108.165:3000/morecharts/api/';
+	window.apiURL = 'http://localhost:3000/morecharts/api/'
 }else{
 	window.apiURL = '/app/'
 }

@@ -1,5 +1,6 @@
 let { Chart, Project } = require('./dbindex');
 let { getBody } = require('../util');
+let { getUserInfo } = require('./common');
 let fs = require('fs');
 var utility = require('utility');
 var path  = require('path');
@@ -26,13 +27,15 @@ function delFile(path, reservePath) {
 	}
 }
 
-function getChartsInfo(req, res, next) {
+async function getChartsInfo(req, res, next) {
 	if(!res.tempRes||!res.tempRes.loginInfo||res.tempRes.loginInfo.status!==1){
 		res.send();
 	}else{
+		let info = await getUserInfo(req.decode_token.pid);
+		let name = info.userInfo.name;
 		let query = Project.findOne({
 			'$and':[{
-				'auther': req.decode_token.pid,
+				'auther': name,
 				'projectName': getBody(req).name
 			}]
 		});

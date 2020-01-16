@@ -1,12 +1,16 @@
-var { User, Project } = require('./dbindex');
+var { Project } = require('./dbindex');
 var { getBody } = require('../util');
+var { getUserInfo } = require('./common');
 
-function getProjectList(req,res,next) {
+
+async function getProjectList(req,res,next) {
 	if(!res.tempRes||!res.tempRes.loginInfo||res.tempRes.loginInfo.status!==1){
 		res.send();
 	}else{
+		let info = await getUserInfo(req.decode_token.pid);
+		let name = info.userInfo.name;
 		Project.find({
-			'auther': req.decode_token.pid
+			'auther': name
 		},function (err, projects) {
 			if(err) return console.log(err);
 			if(projects.length){

@@ -47,7 +47,10 @@ function checkToken(req, res, next){
     getTokenFromDatabase(req.decode_token.token, function (tokenlist) {
         if(tokenlist.length){
             User.find({
-                'userInfo.name': req.decode_token.pid
+                $or: [
+                    {'userInfo.name': req.decode_token.pid},
+                    {'userInfo.email': req.decode_token.pid}
+                ]
             }, function (err, userlist) {
                 if(err) return console.log(err);
                 if(userlist.length){
