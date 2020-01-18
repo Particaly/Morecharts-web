@@ -1,11 +1,9 @@
-#!/usr/bin/env node
-
 /**
  * Module dependencies.
  */
 
 var app = require('../app');
-var debug = require('debug')('express-server:server');
+var debug = require('debug')('morecharts-pk:server');
 var http = require('http');
 
 /**

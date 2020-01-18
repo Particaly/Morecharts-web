@@ -1,0 +1,27 @@
+{
+	"presets": [
+		[
+			"@babel/env",
+			{
+				"targets": {
+					"node": "4"
+				}
+			}
+		]
+	],
+	"plugins": [
+		[
+			"module-resolver",
+			{
+				"root": ["./src"],
+				"alias": {
+					"@": "./src"
+				}
+			}
+		],
+		["@babel/plugin-transform-runtime"],
+		[
+			"@babel/plugin-proposal-optional-chaining"
+		]
+	]
+}

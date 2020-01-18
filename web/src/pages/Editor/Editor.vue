@@ -1,8 +1,15 @@
 <template>
     <main class="container">
         <Split v-model="split">
-            <div slot="left" class="js-editor" id="editor"></div>
-            <div slot="right" class="charter" ref="chart"></div>
+            <div slot="left" class="js-editor" >
+                <div class="header">
+                    
+                </div>
+                <div class="editor" id="editor"></div>
+            </div>
+            <div slot="right" class="right-holder" >
+                <div class="charter" ref="chart"></div>
+            </div>
         </Split>
         <div class="update-img" @click="updateImg">更新缩略图</div>
     </main>
@@ -219,10 +226,22 @@
         box-shadow: inset 0 1px 3px #161a1b;
         background-color: #2c3437;
         text-align: left;
-        font-size: 18px;
+        .header{
+            height: 50px;
+            background: rgba(255,255,255,.9);
+            box-shadow: 0 1px 10px rgba(0,0,0,1);
+        }
+        .editor{
+            height: calc(100% - 50px);
+            font-size: 18px;
+        }
     }
-    .charter{
+    .right-holder{
         height: 100%;
+        padding: 50px;
+        .charter{
+            height: 100%;
+        }
     }
     .update-img{
         position: absolute;
