@@ -96,7 +96,7 @@
                         psw: this.psw
                     }
                 }).then(d => {
-                    d = d.data.data;
+                    d = d.data;
                     if(d.status !== 1){
                     	this.errormsg(d.msg)
                     }else{
@@ -125,7 +125,7 @@
                         pem: this.pem
                     }
                 }).then(d => {
-                    d = d.data.data;
+                    d = d.data;
                     if(d.status !== 1){
                         this.errormsg(d.msg)
                     }else{

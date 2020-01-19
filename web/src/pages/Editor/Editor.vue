@@ -3,7 +3,9 @@
         <Split v-model="split">
             <div slot="left" class="js-editor" >
                 <div class="header">
-                    
+                    <div class="messages">{{message}}</div>
+                    <div class="runner" @click="runScripts">运行</div>
+                    <div class="floders">属性</div>
                 </div>
                 <div class="editor" id="editor"></div>
             </div>
@@ -11,12 +13,11 @@
                 <div class="charter" ref="chart"></div>
             </div>
         </Split>
-        <div class="update-img" @click="updateImg">更新缩略图</div>
     </main>
 </template>
 
 <script>
-    let editor,chart,savetimer,resizetimer;
+    let editor,chart,savetimer,resizetimer,tempimg;
 	export default {
 		name: "Editor",
         data: function(){
@@ -24,7 +25,10 @@
 	            split: 0.43,
                 type: '',
                 value: '',
-                id:''
+                id:'',
+	            message: '',
+                isAttribute: false,
+                rendered: false,
             }
         },
         watch:{
@@ -159,6 +163,8 @@
                 }
             },
 	        triggerSave(params){
+            	this.rendered = false;
+            	let costtime = new Date().getTime();
 		        this.runScripts();
                 this.axios({
                     method: 'post',
@@ -167,6 +173,7 @@
                 }).then(d => {
                 	d = d.data.data;
                 	if(d.status === 1){
+                		this.message = `${new Date().toLocaleTimeString()}  已保存  ${new Date().getTime()-costtime}ms`;
                 		let url = window.location.href;
                 		window.sessionStorage.setItem(url,d.id);
                 		if(!this.id){
@@ -186,12 +193,23 @@
 			            this.$echarts.dispose(chart)
                     }
                     chart = this.$echarts.init(this.$refs.chart);
+		            chart.on('finished',this.saveTempImg);
                     chart.setOption(chartoption);
                 }catch (e) {
                     console.log(e);
 	            }
             },
+	        saveTempImg() {
+		        if(chart){
+		        	let img = chart.getDataURL();
+		        	if(img!==tempimg&&!this.rendered){
+				        tempimg = img;
+				        this.updateImg();
+                    }
+		        }
+            },
 	        updateImg(){
+		        let costtime = new Date().getTime();
             	if(chart){
 		            let img = chart.getDataURL();
 		            this.axios({
@@ -202,7 +220,11 @@
 				            img,
 			            }
 		            }).then(d => {
-
+		            	this.rendered = true;
+                        d = d.data.data;
+                        if(d.status === 1){
+                        	this.message = `${new Date().toLocaleTimeString()}  已更新缩略图  ${new Date().getTime()-costtime}ms`;
+                        }
 		            })
                 }
             }
@@ -230,6 +252,41 @@
             height: 50px;
             background: rgba(255,255,255,.9);
             box-shadow: 0 1px 10px rgba(0,0,0,1);
+            .floders{
+                float: right;
+                color: rgba(0,0,0,.7);
+                line-height: 50px;
+                padding: 0 15px;
+                cursor: pointer;
+                transition: all .4s;
+                font-size: 16px;
+                &:hover{
+                    color: rgba(43, 174, 233,1);
+                }
+            }
+            .runner{
+                float: right;
+                color: rgba(255,255,255,.7);
+                background: rgba(43, 174, 233,1);
+                line-height: 50px;
+                padding: 0 25px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: all .4s;
+            }
+            .messages{
+                height: 50px;
+                line-height: 50px;
+                display: inline-block;
+                text-indent: 15px;
+            }
+            &:after{
+                display: block;
+                content: '';
+                height: 0;
+                width: 0;
+                clear: both;
+            }
         }
         .editor{
             height: calc(100% - 50px);
@@ -243,17 +300,8 @@
             height: 100%;
         }
     }
-    .update-img{
-        position: absolute;
-        top: 0;
-        right: 0;
-        color: rgba(255,255,255,.7);
-        line-height: 60px;
-        padding: 0 15px;
-        cursor: pointer;
-        &:hover{
-            color: #fff;
-        }
-    }
+
+
+
 }
 </style>
