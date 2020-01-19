@@ -90,7 +90,7 @@ function createUser(req, res, next){
 }
 // 修改密码
 /*
-* @decode_token: {
+* @accesstoken: {
 * 		pid,psw,token
 * }
 * status： 1 修改成功，2 旧密码不正确，3 用户数据错误
@@ -128,7 +128,28 @@ function changepassword(req, res, next){
 		})
 	}
 }
+// 获取用户信息
+async function getUserInfo(req,res,next){
+	if(res.predata?.loginInfo.status!==1){
+		res.send();
+	}else{
+		let user = await findUserInfo(req.accesstoken.pid);
+		if(user){
+			res.send({
+				userInfo: user.userInfo,
+				userType: user.userType,
+				userId: user.userId,
+				createdAt: user.createdAt
+			})
+		}else{
+			res.send({
+				status: 3,
+				msg: '用户数据错误'
+			})
+		}
+	}
+}
 
 module.exports = {
-	login,createUser,changepassword
+	login,createUser,changepassword,getUserInfo
 };

@@ -1,24 +1,30 @@
 {
-  "name": "express-server",
+  "name": "newproject",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "watch": "nodemon ./bin/www"
+    "start": "nodemon",
+    "build": "babel src -d dist",
+    "serve": "node dist/bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
-    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.8.3",
-    "morgan": "~1.9.1",
-    "node-sass-middleware": "0.11.0",
-    "pug": "2.0.0-beta11",
     "utility": "^1.16.3"
   },
-  "authorPs": {
-    "info": "!important,it works in Nodejs@12, Mongoose@5, Mongodb@4.2"
+  "devDependencies": {
+    "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/node": "^7.8.3",
+    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/runtime": "^7.8.3",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "nodemon": "^2.0.2"
   }
 }
