@@ -185,7 +185,9 @@
 			            }
 		            }).then(d => {
 			            d = d.data.data;
-			            this.chartName = d.name;
+			            setTimeout(() => {
+				            this.chartName = d.name;
+			            },500);
 			            this.chartTags = this.removeNullValue(d.tag);
 			            console.log(d);
 			            this.generateWord(d.code);
@@ -206,6 +208,7 @@
                     data:{...params,code:this.value,project: this.query.project,id:this.id},
                     url: window.apiURL + 'updateChart'
                 }).then(d => {
+                	console.log(d);
                 	d = d.data.data;
                 	if(d.status === 1){
                 		this.message = `${new Date().toLocaleTimeString()}  已保存  ${new Date().getTime()-costtime}ms`;
@@ -215,7 +218,8 @@
                 			this.id = d.id;
                         }
                     }else{
-                		this.$Message.error(d.msg)
+                		this.$Message.error(d.msg);
+                        this.getChartInfo()
                     }
                 });
             },

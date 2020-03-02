@@ -1,5 +1,5 @@
 import { Chart, Project } from './Mongoose';
-import { getBody, delFile } from '../util';
+import { getBody, delFile, istype, randomId } from '../util';
 import { findUserInfo, findProjectInfo, findChartInfo } from './common';
 import fs from 'fs';
 import utility from 'utility';
@@ -37,6 +37,7 @@ async function getChartsInfo(req, res, next) {
 	}
 }
 
+
 async function updateChart(req, res, next) {
 	if(res.predata?.loginInfo.status!==1){
 		res.send();
@@ -44,6 +45,20 @@ async function updateChart(req, res, next) {
 		let info = await findUserInfo(req.accesstoken.pid);
 		let name = info.userInfo.name;
 		let data = getBody(req);
+		if(istype('Object', data)){
+			let name = data.name;
+			let project = data.project;
+			let list = await findChartInfo({
+				$and: [
+					{'chartInfo.name': name},
+					{'chartInfo.project': project}
+				]
+			},'array');
+			if(list.length > 1){
+				data.name += randomId(6);
+				data.refresh = true;
+			}
+		}
 		if(!data.id){
 			let newChart = new Chart({
 				chartInfo:{
@@ -65,8 +80,8 @@ async function updateChart(req, res, next) {
 				project.save();
 				res.send({
 					id: newChart._id.toString(),
-					status: 1,
-					msg: '保存成功'
+					status: data.refresh?2:1,
+					msg: data.refresh?'当前名称不可用，已替换为新的名称':'保存成功'
 				});
 			}else{
 				res.send({
@@ -86,8 +101,8 @@ async function updateChart(req, res, next) {
 				chart.save();
 				res.send({
 					id: data.id,
-					status: 1,
-					msg: '保存成功'
+					status: data.refresh?2:1,
+					msg: data.refresh?'当前名称不可用，已替换为新的名称':'保存成功'
 				})
 			}
 		}

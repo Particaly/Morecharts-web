@@ -34,4 +34,16 @@ function delFile(path, reservePath) {
 	}
 }
 
-export { istype, getBody, delFile }
+// 生成随机id
+function randomId(num){
+	var returnStr = "",
+		charStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	for(var i=0; i<num; i++){
+		if(i===0){returnStr+='P';continue}
+		var index = Math.round(Math.random() * (charStr.length-1));
+		returnStr += charStr.substring(index,index+1);
+	}
+	return returnStr;
+}
+
+export { istype, getBody, delFile, randomId }
