@@ -224,6 +224,8 @@
             	let chartoption;
             	let builder = this.value + `;\nchartoption = option;`;
             	try{
+            		let echarts = this.$echarts,
+                        Echarts = this.$echarts;
 		            eval(builder);
 		            if(chart){
 			            this.$echarts.dispose(chart)

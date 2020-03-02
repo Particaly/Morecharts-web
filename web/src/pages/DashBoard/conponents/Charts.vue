@@ -3,7 +3,7 @@
         <div class="card">
             <div class="card-item" @click="$router.go(-1)">返回项目列表</div>
             <div class="right-banner">
-                <div class="copybtn">获取js文件</div>
+                <div class="copybtn" @click="getJSFile">获取js文件</div>
                 <Dropdown placement="bottom-end" @on-click="takeOrder">
                     <div style="cursor: pointer">
                         排序
@@ -59,7 +59,7 @@
 			this.getChartsInfo();
         },
         methods: {
-	        takeOrder(name){
+	        takeOrder(name) {
 		        if(name === this.lastOrder){
 			        this.charts = this.charts.reverse();
 			        return
@@ -79,10 +79,10 @@
 			        return new Date(b[flag]).getTime()- new Date(a[flag]).getTime();
 		        })
 	        },
-	        createNewCharts(){
+	        createNewCharts() {
                 this.$router.push('/editor?project='+this.projectName+ '&'+'name=new')
             },
-	        getChartsInfo(){
+	        getChartsInfo() {
                 this.axios({
                     method:'post',
                     url: window.apiURL + 'getChartsInfo',
@@ -95,8 +95,11 @@
                 	console.log(d);
                 })
             },
-            getlink(val){
+            getlink(val) {
 	        	return `/editor?project=${val.chartInfo.project}&name=${val.chartInfo.name}&id=${val._id}`
+            },
+	        getJSFile() {
+
             }
         },
 	}
@@ -165,7 +168,7 @@
             background: #fff;
             color: #2d8cf0;
             overflow: hidden;
-            padding: 10px 0 50px 0;
+            padding: 0 0 50px 0;
             border-radius: 5px;
             cursor: pointer;
             /*filter: grayscale(100%);*/
@@ -174,7 +177,6 @@
             .img-holder{
                 height: 100%;
                 width: 100%;
-                border-radius: 10px;
                 overflow: hidden;
                 transition: all .4s;
                 img{
