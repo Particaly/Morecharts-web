@@ -45,6 +45,12 @@ async function updateChart(req, res, next) {
 		let info = await findUserInfo(req.accesstoken.pid);
 		let name = info.userInfo.name;
 		let data = getBody(req);
+		if(!data.name){
+			res.send({
+				status: 3,
+				msg: '名称不能为空'
+			})
+		}
 		if(istype('Object', data)){
 			let name = data.name;
 			let project = data.project;
@@ -54,9 +60,18 @@ async function updateChart(req, res, next) {
 					{'chartInfo.project': project}
 				]
 			},'array');
+			console.log(data.name);
+			console.log(list.length);
+			
 			if(list.length > 1){
 				data.name += randomId(6);
 				data.refresh = true;
+			}else if(list.length === 1){
+				if(data.id&&(data.id !== list[0]._id.toString())){
+					console.log(list[0]._id.toString());
+					data.name += randomId(6);
+					data.refresh = true;
+				}
 			}
 		}
 		if(!data.id){

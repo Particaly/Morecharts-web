@@ -11,7 +11,11 @@
                 <div class="props" v-show="isProps">
                     <div class="optionsline">
                         <div class="o-title">图表名称：</div>
-                        <input type="text" maxlength="12" v-model="chartName" />
+                        <input type="text" v-model="chartName" @blur="triggerSave({
+                            name:chartName,
+                            type:chartType,
+                            tag:chartTags
+                        },false)" />
                     </div>
                     <div class="optionsline">
                         <div class="o-title">图表类型：</div>
@@ -78,13 +82,6 @@
 	                },300)
                 }
 	        },
-            chartName: function () {
-	            this.triggerSave({
-                    name:this.chartName,
-		            type:this.chartType,
-		            tag:this.chartTags
-                },false)
-            }
         },
         computed:{
 			query: function() {
@@ -141,19 +138,28 @@
             },
             // 编辑器内容发生更改，绑定事件
             addListenerToEditor() {
+            	let first = true;
 	            editor.session.on('change', (delta) => {
 		            let value = editor.getValue(),
 			            name = this.chartName,
                         type = this.chartType,
                         tag = this.chartTags;
 		            if(this.value!==value){
+			            this.value = value;
+			            if(first){
+			            	this.runScripts();
+                        }
 			            if(savetimer){
 				            clearTimeout(savetimer);
 			            }
 			            savetimer = setTimeout(() => {
-				            this.value = value;
+			            	if(first){
+					            first = false;
+                            }else{
+					            this.runScripts();
+                            }
 				            this.triggerSave({name,tag,type});
-			            },1000)
+			            },1500)
                     }else{
 			            if(savetimer){
 				            clearTimeout(savetimer);
@@ -185,9 +191,7 @@
 			            }
 		            }).then(d => {
 			            d = d.data.data;
-			            setTimeout(() => {
-				            this.chartName = d.name;
-			            },500);
+                        this.chartName = d.name;
 			            this.chartTags = this.removeNullValue(d.tag);
 			            console.log(d);
 			            this.generateWord(d.code);
@@ -197,12 +201,9 @@
                 }
             },
             // 保存数据到服务器
-	        triggerSave(params,runScript=true) {
+	        triggerSave(params) {
             	this.rendered = false;
             	let costtime = new Date().getTime();
-            	if(runScript){
-		            this.runScripts();
-                }
                 this.axios({
                     method: 'post',
                     data:{...params,code:this.value,project: this.query.project,id:this.id},
