@@ -60,9 +60,6 @@ async function updateChart(req, res, next) {
 					{'chartInfo.project': project}
 				]
 			},'array');
-			console.log(data.name);
-			console.log(list.length);
-			
 			if(list.length > 1){
 				data.name += randomId(6);
 				data.refresh = true;
@@ -180,6 +177,10 @@ async function updateImg(req, res, next){
 	}
 }
 
+function getChartFile(req, res, next) {
+
+}
+
 module.exports = {
-	getChartsInfo, updateChart, getChartInfo, updateImg
+	getChartsInfo, updateChart, getChartInfo, updateImg, getChartFile
 };

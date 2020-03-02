@@ -99,7 +99,15 @@
 	        	return `/editor?project=${val.chartInfo.project}&name=${val.chartInfo.name}&id=${val._id}`
             },
 	        getJSFile() {
-
+                this.axios({
+                    method: 'post',
+                    url: window.apiURL + 'getChartFile',
+                    data:{
+                    	name: this.projectName
+                    }
+                }).then(d => {
+                	console.log(d);
+                })
             }
         },
 	}

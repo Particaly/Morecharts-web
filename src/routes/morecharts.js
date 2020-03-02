@@ -1,6 +1,7 @@
 let {
 	login, createUser, changepassword, getUserInfo, getProjectList,
-	createNewProject, getChartsInfo, updateChart, getChartInfo, updateImg
+	createNewProject, getChartsInfo, updateChart, getChartInfo, updateImg,
+	getChartFile
 } = require('../database');
 import express from 'express';
 var router = express.Router();
@@ -34,5 +35,7 @@ router.post('/api/getChartInfo', getChartInfo);
 router.post('/api/updateChart', updateChart);
 
 router.post('/api/updateImg', updateImg);
+
+router.post('/api/getChartFile', getChartFile);
 
 module.exports = router;
