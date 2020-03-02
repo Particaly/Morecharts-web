@@ -3,6 +3,7 @@
         <div class="card">
             <div class="card-item" @click="$router.go(-1)">返回项目列表</div>
             <div class="right-banner">
+                <div class="copybtn">获取js文件</div>
                 <Dropdown placement="bottom-end" @on-click="takeOrder">
                     <div style="cursor: pointer">
                         排序
@@ -207,5 +208,14 @@
     position: absolute;
     padding-right: 15px;
     right: 0;
+    display: flex;
+    &>div{
+        transition: all .3s;
+        margin-right: 15px;
+    }
+    .copybtn:hover{
+        cursor: pointer;
+        color: #2baee9;
+    }
 }
 </style>

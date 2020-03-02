@@ -7,7 +7,8 @@ import iView from 'view-design';
 import 'view-design/dist/styles/iview.css';
 import '@/assets/iconfont/base/iconfont.js';
 import tooltips from '@jspatrick/tooltip';
-import '@jspatrick/tooltip/dist/popup.css'
+import '@jspatrick/tooltip/dist/popup.css';
+import tool from '@/lib/tool';
 
 Vue.use(tooltips,{router,store});
 
@@ -17,7 +18,7 @@ Vue.config.productionTip = false;
 Vue.use(iView);
 Vue.prototype.axios = axios;
 Vue.prototype.$echarts = echarts;
-
+Vue.prototype.$tool = tool;
 
 
 const bus = new Vue();

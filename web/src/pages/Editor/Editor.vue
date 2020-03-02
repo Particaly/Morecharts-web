@@ -5,9 +5,41 @@
                 <div class="header">
                     <div class="messages">{{message}}</div>
                     <div class="runner" @click="runScripts">运行</div>
-                    <div class="floders">属性</div>
+                    <div class="floders" @click="showProps">{{isProps?'代码':'属性'}}</div>
                 </div>
-                <div class="editor" id="editor"></div>
+                <div class="editor" id="editor" v-show="!isProps"></div>
+                <div class="props" v-show="isProps">
+                    <div class="optionsline">
+                        <div class="o-title">图表名称：</div>
+                        <input type="text" maxlength="12" v-model="chartName" />
+                    </div>
+                    <div class="optionsline">
+                        <div class="o-title">图表类型：</div>
+                        <label for="charttype">
+                            <input type="radio" id="charttype" checked="checked">
+                            Echarts
+                        </label>
+                    </div>
+                    <div class="optionsline" style="align-items: flex-start">
+                        <div class="o-title">图表标签：</div>
+                        <div class="tags">
+                            <Tag v-for="(item,key) in chartTags"
+                                 size="large"
+                                 :key="item"
+                                 :name="item"
+                                 closable
+                                 @on-close="handleClose2"
+                            >
+                                <span class="tag-input"
+                                   @blur="saveTagChange(key)"
+                                   :ref="'tag'+key"
+                                   contenteditable="true"
+                                >{{item}}</span>
+                            </Tag>
+                            <Button icon="ios-add" type="dashed" @click="handleAdd">添加标签</Button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div slot="right" class="right-holder" >
                 <div class="charter" ref="chart"></div>
@@ -29,6 +61,10 @@
 	            message: '',
                 isAttribute: false,
                 rendered: false,
+	            isProps: false,
+	            chartName: '',
+                chartType: 'Echarts',
+	            chartTags: []
             }
         },
         watch:{
@@ -41,7 +77,14 @@
 		                chart.resize()
 	                },300)
                 }
-	        }
+	        },
+            chartName: function () {
+	            this.triggerSave({
+                    name:this.chartName,
+		            type:this.chartType,
+		            tag:this.chartTags
+                },false)
+            }
         },
         computed:{
 			query: function() {
@@ -60,7 +103,8 @@
             this.createScript();
         },
         methods: {
-            createScript(){
+			// 创建editor插件的script标签
+            createScript() {
             	let list = [
 		            'https://cdn.bootcss.com/ace/1.4.6/ace.js',
             		'https://cdn.bootcss.com/ace/1.4.6/ext-language_tools.js',
@@ -82,7 +126,8 @@
                     }
                 }
             },
-            onScriptReady(){
+            // editor插件加载完毕后执行
+            onScriptReady() {
 	            editor = ace.edit("editor", {
 		            theme: "ace/theme/monokai",
 		            mode: "ace/mode/javascript",
@@ -94,27 +139,13 @@
 	            });
 	            this.getChartInfo();
             },
-            addListenerToEditor(){
+            // 编辑器内容发生更改，绑定事件
+            addListenerToEditor() {
 	            editor.session.on('change', (delta) => {
 		            let value = editor.getValue(),
-			            nameRules = new RegExp(/@name.*?:(.*)?\n/),
-			            typeRules = new RegExp(/@type.*?:(.*)?\n/),
-			            tagRules = new RegExp(/@tag.*?:(.*)?\n/),
-			            name = value.match(nameRules),
-			            type = value.match(typeRules),
-			            tag = value.match(tagRules);
-		            if(name.length&&name[1]){
-			            name = name[1].trim();
-		            }
-		            if(type.length&&type[1]){
-			            type = type[1].trim();
-		            }
-		            if(tag.length&&tag[1]){
-			            tag = tag[1].trim();
-			            let fh = new RegExp(/[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/ig);
-			            tag = tag.replace(fh,',').split(',');
-		            }
-		            this.type = type;
+			            name = this.chartName,
+                        type = this.chartType,
+                        tag = this.chartTags;
 		            if(this.value!==value){
 			            if(savetimer){
 				            clearTimeout(savetimer);
@@ -130,21 +161,19 @@
                     }
 	            });
             },
-            generateWord(text){
+            // 生成注释到编辑器
+            generateWord(text) {
             	this.$nextTick(() => {
             		if(editor){
 			            editor.insert(text);
                     }
             	});
             },
-	        getChartInfo(){
+            // 获取图表的内容
+	        getChartInfo() {
+            	// 如果id不存在，说明是新建的图表
             	if(!this.id){
-            		let header = `/*\n* @name: ${this.query.name}\n`;
-            		let type = `* @type: echarts\n`;
-            		let tag = `* @tag: \n*/\n\n`;
-            		let defaultOption = `let option = {\n   \n}\n`;
-		            let text = header+type+tag+defaultOption;
-		            this.generateWord(text);
+		            this.generateWord(`let option = {\n   \n}\n`);
 		            this.value = text;
 		            this.addListenerToEditor()
                 }else{
@@ -156,16 +185,22 @@
 			            }
 		            }).then(d => {
 			            d = d.data.data;
+			            this.chartName = d.name;
+			            this.chartTags = this.removeNullValue(d.tag);
+			            console.log(d);
 			            this.generateWord(d.code);
 			            this.value = editor.getValue();
 			            this.addListenerToEditor()
 		            })
                 }
             },
-	        triggerSave(params){
+            // 保存数据到服务器
+	        triggerSave(params,runScript=true) {
             	this.rendered = false;
             	let costtime = new Date().getTime();
-		        this.runScripts();
+            	if(runScript){
+		            this.runScripts();
+                }
                 this.axios({
                     method: 'post',
                     data:{...params,code:this.value,project: this.query.project,id:this.id},
@@ -184,7 +219,8 @@
                     }
                 });
             },
-            runScripts(){
+            // 运行代码查看效果
+            runScripts() {
             	let chartoption;
             	let builder = this.value + `;\nchartoption = option;`;
             	try{
@@ -199,6 +235,7 @@
                     console.log(e);
 	            }
             },
+            // 保存缩略图
 	        saveTempImg() {
 		        if(chart){
 		        	let img = chart.getDataURL();
@@ -208,7 +245,8 @@
                     }
 		        }
             },
-	        updateImg(){
+            // 上传缩略图
+	        updateImg() {
 		        let costtime = new Date().getTime();
             	if(chart){
 		            let img = chart.getDataURL();
@@ -226,6 +264,40 @@
                         	this.message = `${new Date().toLocaleTimeString()}  已更新缩略图  ${new Date().getTime()-costtime}ms`;
                         }
 		            })
+                }
+            },
+            // 切换代码和属性的开关
+	        showProps(){
+                this.isProps = !this.isProps;
+            },
+            // 添加标签
+	        handleAdd() {
+		        if (this.chartTags.length) {
+			        this.chartTags.push(this.chartTags[this.chartTags.length - 1] + 1);
+		        } else {
+			        this.chartTags.push('图表');
+		        }
+	        },
+            // 删除标签
+	        handleClose2(event, name) {
+		        const index = this.chartTags.indexOf(name);
+		        this.chartTags.splice(index, 1);
+	        },
+            // 从dom读取数据
+	        saveTagChange(key) {
+		        this.chartTags[key] = this.$refs['tag' + key][0].textContent;
+		        this.triggerSave({
+			        name:this.chartName,
+			        type:this.chartType,
+			        tag:this.chartTags
+		        },false)
+            },
+            // 删除数组中为空的元素
+            removeNullValue(array){
+            	if(this.$tool.isType('Array',array)){
+                    return array.filter(val => val)
+                }else{
+            		return array
                 }
             }
         },
@@ -288,9 +360,41 @@
                 clear: both;
             }
         }
-        .editor{
+        .editor,.props{
             height: calc(100% - 50px);
             font-size: 18px;
+        }
+        .props{
+            padding: 50px;
+            .optionsline{
+                display: flex;
+                align-items: center;
+                margin-top: 8px;
+                .o-title{
+                    color: #52D9EF;
+                }
+                input,label{
+                    background: #2C3437;
+                    border: none;
+                    outline: none;
+                    color: #fff0f6;
+                }
+                .tags{
+                    flex: 1;
+                    min-height: 60px;
+                    border-radius: 2px;
+                    padding: 5px;
+                    display: flex;
+                    align-items: baseline;
+                    flex-wrap: wrap;
+                    .tag-input{
+                        background: #f7f7f7;
+                        color: #000;
+                        width: auto;
+                        outline: none;
+                    }
+                }
+            }
         }
     }
     .right-holder{
