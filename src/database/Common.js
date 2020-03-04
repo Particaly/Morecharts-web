@@ -1,5 +1,7 @@
 import {AccessToken,User,Project,Chart} from '@/database/Mongoose.js';
 import {istype} from "../util";
+import fs from 'fs';
+import path from 'path';
 
 function findAccessToken(token) {
 	return new Promise((resolve,reject)=>{
@@ -77,6 +79,30 @@ function findChartInfo(params, type) {
 	});
 }
 
+function generateJSFile(data,perpath) {
+	let filePath = path.resolve(__dirname,'../../',perpath);
+	let chartData = [];
+	for(let i in data){
+		chartData.push(`"${data[i].chartInfo.name}":"${data[i].chartInfo.code}"`)
+	}
+	let filedata = `
+		if(window.namespace === undefined){
+			window.namespace = {
+				morechartsData:_morechartsData()
+			}
+		}else{
+			window.namespace.morechartsData = _morechartsData()
+		}
+		function _morechartsData(){
+			return {
+				${chartData.toString()}
+			};
+		}
+	`;
+	fs.writeFileSync(filePath, filedata);
+	return filePath
+}
+
 module.exports = {
-	findUserInfo, findAccessToken, findProjectInfo, findChartInfo
+	findUserInfo, findAccessToken, findProjectInfo, findChartInfo, generateJSFile
 };

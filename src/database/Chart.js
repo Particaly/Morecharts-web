@@ -1,6 +1,6 @@
 import { Chart, Project } from './Mongoose';
 import { getBody, delFile, istype, randomId } from '../util';
-import { findUserInfo, findProjectInfo, findChartInfo } from './common';
+import { findUserInfo, findProjectInfo, findChartInfo, generateJSFile } from './common';
 import fs from 'fs';
 import utility from 'utility';
 import path from 'path';
@@ -177,8 +177,37 @@ async function updateImg(req, res, next){
 	}
 }
 
-function getChartFile(req, res, next) {
-
+async function getChartFile(req, res, next) {
+	if(res.predata?.loginInfo.status!==1){
+		res.send();
+	}else{
+		let data = getBody(req);
+		if(data.name){
+			let project = await findProjectInfo({
+				'projectName': data.name
+			});
+			if(project){
+				if(project.chartList.length){
+					let filedata = await findChartInfo({
+						'_id':{
+							'$in': project.chartList
+						}
+					},'array');
+					let filePath = generateJSFile(filedata,`./public/morecharts/js/${data.name}.js`)
+					res.send({
+						status:1
+					})
+				}else{
+					res.send([])
+				}
+			}else{
+				res.send({
+					status: 404,
+					msg: '找不到该项目'
+				})
+			}
+		}
+	}
 }
 
 module.exports = {
