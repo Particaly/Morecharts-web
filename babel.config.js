@@ -1,4 +1,4 @@
-{
+module.exports = {
 	"presets": [
 		[
 			"@babel/env",
@@ -13,10 +13,14 @@
 		[
 			"module-resolver",
 			{
-				"root": ["./src"],
+				"root": ["./"],
 				"alias": {
-					"@": "./src"
-				}
+					"@": "./"
+				},
+				"extensions": [
+					".js", ".jsx", ".es", ".es6", ".mjs", "index.js"
+				],
+				"stripExtensions": [".js", ".jsx", ".es", ".es6", ".mjs"]
 			}
 		],
 		["@babel/plugin-transform-runtime"],
